@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -254,7 +253,7 @@ const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
         </CardContent>
       </Card>
 
-      {/* Resumen ejecutivo con estilo de cards */}
+      {/* Resumen ejecutivo con estilo de cards corregido */}
       <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-3">
         {/* Estado de la campaña */}
         <Card className={`${
@@ -265,10 +264,10 @@ const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
         }`}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Estado de Campaña</CardTitle>
-            {roi >= 20 && <CheckCircle className="h-4 w-4 text-green-600" />}
-            {roi >= 0 && roi < 20 && <TrendingUp className="h-4 w-4 text-blue-600" />}
-            {roi >= -20 && roi < 0 && <AlertTriangle className="h-4 w-4 text-yellow-600" />}
-            {roi < -20 && <AlertCircle className="h-4 w-4 text-red-600" />}
+            {roi >= 20 ? <CheckCircle className="h-4 w-4 text-green-600" /> :
+             roi >= 0 ? <TrendingUp className="h-4 w-4 text-blue-600" /> :
+             roi >= -20 ? <AlertTriangle className="h-4 w-4 text-yellow-600" /> :
+             <AlertCircle className="h-4 w-4 text-red-600" />}
           </CardHeader>
           <CardContent>
             <p className={`text-sm font-medium ${
@@ -277,16 +276,16 @@ const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
               roi >= -20 ? 'text-yellow-700' :
               'text-red-700'
             }`}>
-              {roi >= 20 && 'Excelente rentabilidad'}
-              {roi >= 0 && roi < 20 && 'Campaña rentable pero mejorable'}
-              {roi >= -20 && roi < 0 && 'Campaña en pérdida, necesita optimización'}
-              {roi < -20 && 'Campaña con pérdidas significativas'}
+              {roi >= 20 ? 'Excelente rentabilidad' :
+               roi >= 0 ? 'Campaña rentable pero mejorable' :
+               roi >= -20 ? 'Campaña en pérdida, necesita optimización' :
+               'Campaña con pérdidas significativas'}
             </p>
           </CardContent>
         </Card>
 
-        {/* Alert para sin conversiones */}
-        {numConversiones === 0 && gastoTotal > 0 && (
+        {/* Condicional para conversiones */}
+        {numConversiones === 0 && gastoTotal > 0 ? (
           <Card className="bg-amber-50 border-amber-200">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Sin Conversiones</CardTitle>
@@ -299,10 +298,7 @@ const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
               </p>
             </CardContent>
           </Card>
-        )}
-
-        {/* Success para campaña rentable */}
-        {roi >= 0 && (
+        ) : roi >= 0 ? (
           <Card className="bg-green-50 border-green-200">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">¡Felicitaciones!</CardTitle>
@@ -315,7 +311,7 @@ const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
               </p>
             </CardContent>
           </Card>
-        )}
+        ) : null}
 
         {/* Info de datos simulados */}
         <Card className="bg-blue-50 border-blue-200">
