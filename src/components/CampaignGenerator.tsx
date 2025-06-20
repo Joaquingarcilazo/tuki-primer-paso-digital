@@ -82,7 +82,7 @@ const generateAdText = (
   const templates: Record<string, string[]> = {
     /* OBJETIVO: VISIBILIDAD */
     'Aumentar visibilidad de mi marca': [
-      `Descubrí nuestra línea de ${productoLimpio} y sentí la diferencia. ${title}`,
+      `Descubrí nuestra línea de ${productoLimpio} y sentí la diferencia. Calidad garantizada.`,
       `Tu próximo ${productoLimpio} está acá. Elegí calidad y estilo hoy mismo.`,
       `Innovación y diseño en ${productoLimpio}. Mirá lo que tenemos preparado para vos.`,
       `Llevá tu experiencia al siguiente nivel con nuestros ${productoLimpio}. Conocenos ahora.`,
@@ -91,10 +91,10 @@ const generateAdText = (
 
     /* OBJETIVO: CONSULTAS / LEADS */
     'Generar más leads/consultas': [
-      `Escribinos y recibí asesoramiento gratis sobre nuestros ${productoLimpio}. ${title}`,
+      `¿Buscás ${productoLimpio} de calidad? Escribinos y recibí asesoramiento gratis.`,
       `Consultá hoy por nuestros ${productoLimpio} y obtené respuestas al instante.`,
-      `Contanos qué ${productoLimpio} buscás y te ayudamos a elegir la mejor opción.`,
-      `Obtené información detallada y presupuestos sin compromiso. ¡Hablá con nosotros!`,
+      `Contanos qué tipo de ${productoLimpio} necesitás y te ayudamos a elegir la mejor opción.`,
+      `Obtené información detallada y presupuestos sin compromiso sobre ${productoLimpio}.`,
       `Estamos online para resolver tus dudas sobre ${productoLimpio}. ¡Consultanos ahora!`
     ],
 
