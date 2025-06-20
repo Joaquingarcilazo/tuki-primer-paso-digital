@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
-import { DollarSign, TrendingUp, Eye, MousePointer, ShoppingCart } from 'lucide-react';
+import { DollarSign, TrendingUp, Eye, MousePointer, ShoppingCart, AlertTriangle, CheckCircle, AlertCircle, Bot } from 'lucide-react';
 
 interface CampaignDashboardProps {
   adAccountId: string;
@@ -254,45 +254,83 @@ const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
         </CardContent>
       </Card>
 
-      {/* Resumen ejecutivo */}
-      <Card className="bg-gradient-to-r from-blue-50 to-purple-50">
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <TrendingUp className="h-5 w-5" />
-            <span>Resumen Ejecutivo</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="prose text-sm">
-            <p className="mb-2">
-              <strong>Estado de tu campaña:</strong> {' '}
+      {/* Resumen ejecutivo con estilo de cards */}
+      <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-3">
+        {/* Estado de la campaña */}
+        <Card className={`${
+          roi >= 20 ? 'bg-green-50 border-green-200' :
+          roi >= 0 ? 'bg-blue-50 border-blue-200' :
+          roi >= -20 ? 'bg-yellow-50 border-yellow-200' :
+          'bg-red-50 border-red-200'
+        }`}>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Estado de Campaña</CardTitle>
+            {roi >= 20 && <CheckCircle className="h-4 w-4 text-green-600" />}
+            {roi >= 0 && roi < 20 && <TrendingUp className="h-4 w-4 text-blue-600" />}
+            {roi >= -20 && roi < 0 && <AlertTriangle className="h-4 w-4 text-yellow-600" />}
+            {roi < -20 && <AlertCircle className="h-4 w-4 text-red-600" />}
+          </CardHeader>
+          <CardContent>
+            <p className={`text-sm font-medium ${
+              roi >= 20 ? 'text-green-700' :
+              roi >= 0 ? 'text-blue-700' :
+              roi >= -20 ? 'text-yellow-700' :
+              'text-red-700'
+            }`}>
               {roi >= 20 && 'Excelente rentabilidad'}
               {roi >= 0 && roi < 20 && 'Campaña rentable pero mejorable'}
               {roi >= -20 && roi < 0 && 'Campaña en pérdida, necesita optimización'}
               {roi < -20 && 'Campaña con pérdidas significativas'}
             </p>
-            
-            {numConversiones === 0 && gastoTotal > 0 && (
-              <p className="text-amber-700 bg-amber-50 p-2 rounded text-xs">
-                ⚠️ <strong>Sin conversiones aún:</strong> Tu anuncio está generando impresiones y clicks, 
-                pero aún no registramos ventas. Esto es normal en campañas nuevas.
+          </CardContent>
+        </Card>
+
+        {/* Alert para sin conversiones */}
+        {numConversiones === 0 && gastoTotal > 0 && (
+          <Card className="bg-amber-50 border-amber-200">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Sin Conversiones</CardTitle>
+              <AlertTriangle className="h-4 w-4 text-amber-600" />
+            </CardHeader>
+            <CardContent>
+              <p className="text-amber-700 text-sm">
+                Tu anuncio está generando impresiones y clicks, pero aún no registramos ventas. 
+                Esto es normal en campañas nuevas.
               </p>
-            )}
-            
-            {roi >= 0 && (
-              <p className="text-green-700 bg-green-50 p-2 rounded text-xs">
-                ✅ <strong>¡Felicitaciones!</strong> Tu campaña está generando ganancias. 
-                Por cada $1 invertido, estás obteniendo ${((ventasEstimadas/gastoTotal) || 0).toFixed(2)} en ventas.
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Success para campaña rentable */}
+        {roi >= 0 && (
+          <Card className="bg-green-50 border-green-200">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">¡Felicitaciones!</CardTitle>
+              <CheckCircle className="h-4 w-4 text-green-600" />
+            </CardHeader>
+            <CardContent>
+              <p className="text-green-700 text-sm">
+                Tu campaña está generando ganancias. Por cada $1 invertido, 
+                estás obteniendo ${((ventasEstimadas/gastoTotal) || 0).toFixed(2)} en ventas.
               </p>
-            )}
-            
-            <p className="text-blue-700 bg-blue-50 p-2 rounded text-xs mt-2">
-              🤖 <strong>Datos simulados:</strong> Este dashboard muestra datos realistas simulados 
-              para demostración. En producción se conectaría con Meta Marketing API.
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Info de datos simulados */}
+        <Card className="bg-blue-50 border-blue-200">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Datos Simulados</CardTitle>
+            <Bot className="h-4 w-4 text-blue-600" />
+          </CardHeader>
+          <CardContent>
+            <p className="text-blue-700 text-sm">
+              Este dashboard muestra datos realistas simulados para demostración. 
+              En producción se conectaría con Meta Marketing API.
             </p>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
