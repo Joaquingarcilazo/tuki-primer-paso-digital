@@ -6,6 +6,9 @@ import { Campaign, UserData } from '../types/campaign';
 import { getProductImage } from '@/services/ai';
 import { isImageRelevant } from '@/helpers/relevance';
 import CampaignImageGenerator from './CampaignImageGenerator';
+import { toast } from '@/components/ui/use-toast';
+import { publishToInstagram } from '@/services/instagramPublisher';
+import InstagramPreview from './InstagramPreview';
 
 interface CampaignSummaryProps {
   campaign: Campaign;
@@ -18,6 +21,8 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({ campaign, userData, o
   const [showImageGenerator, setShowImageGenerator] = useState(false);
   const [campaignWithImages, setCampaignWithImages] = useState<Campaign>(campaign);
   const [imgUrl, setImgUrl] = useState<string>('');
+  const [showInstagramPreview, setShowInstagramPreview] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -40,9 +45,49 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({ campaign, userData, o
     setShowImageGenerator(false);
   };
 
-  const handlePublishCampaign = () => {
-    // Simular publicación de campaña
-    alert('🚀 ¡Excelente! Tu campaña está lista para publicar. En la versión completa, esto se conectaría directamente con las plataformas de publicidad. ¡Tu campaña se ve increíble!');
+  const handlePublishCampaign = async () => {
+    setIsPublishing(true);
+    
+    try {
+      // Usar la imagen generada automáticamente o la primera de las imágenes de campaña
+      const imageToUse = imgUrl || (campaignWithImages.imagenes?.[0]);
+      
+      if (!imageToUse) {
+        toast({
+          title: "Imagen requerida",
+          description: "Necesitás una imagen para publicar en Instagram",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Mostrar preview de Instagram primero
+      setShowInstagramPreview(true);
+      
+      // Simular publicación en Instagram
+      const instagramPost = await publishToInstagram(campaignWithImages, userData, imageToUse);
+      
+      // Mostrar resultado exitoso
+      toast({
+        title: "🎉 ¡Campaña publicada!",
+        description: `Tu publicación de Instagram fue programada exitosamente. ID: ${instagramPost.id.slice(-8)}`,
+      });
+      
+      // Ocultar preview después de mostrar el toast
+      setTimeout(() => {
+        setShowInstagramPreview(false);
+      }, 3000);
+      
+    } catch (error) {
+      console.error('Error publicando campaña:', error);
+      toast({
+        title: "Error al publicar",
+        description: "Hubo un problema al publicar tu campaña. Intentá de nuevo.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsPublishing(false);
+    }
   };
 
   const handleBackFromImageGenerator = () => {
@@ -81,6 +126,29 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({ campaign, userData, o
           </p>
         </div>
       </div>
+
+      {/* Instagram Preview Modal */}
+      {showInstagramPreview && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+            <h3 className="text-lg font-semibold mb-4 text-center">
+              📸 Preview de tu publicación en Instagram
+            </h3>
+            <InstagramPreview
+              caption={campaignWithImages.texto}
+              imageUrl={imgUrl || campaignWithImages.imagenes?.[0] || ''}
+              hashtags={['#emprendimiento', '#argentina', '#negocio']}
+              accountName={userData.productoServicio.toLowerCase().replace(/\s+/g, '_')}
+            />
+            <div className="mt-4 text-center">
+              <div className="inline-flex items-center space-x-2 text-green-600">
+                <div className="w-2 h-2 bg-green-600 rounded-full animate-pulse"></div>
+                <span className="text-sm">Publicando en Instagram...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Campaign Summary Card */}
       <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-0 p-8">
@@ -217,10 +285,11 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({ campaign, userData, o
 
               <Button
                 onClick={handlePublishCampaign}
-                className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+                disabled={isPublishing}
+                className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50"
               >
                 <Rocket className="w-5 h-5 mr-2" />
-                Publicar campaña
+                {isPublishing ? 'Publicando...' : 'Publicar en Instagram'}
               </Button>
               
               <Button
