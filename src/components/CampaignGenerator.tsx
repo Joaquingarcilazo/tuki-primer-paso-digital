@@ -105,11 +105,12 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({ userData, onBack 
 
   const generateAdText = (producto: string, cliente: string): string => {
     const templates = [
-      `¿Eres ${cliente.toLowerCase()}? ${producto} es para ti. ¡Descubre por qué!`,
-      `${producto} perfecto para ${cliente.toLowerCase()}. Únete a miles que ya eligieron calidad.`,
-      `Tu solución ideal: ${producto}. Especialmente diseñado para ${cliente.toLowerCase()}.`,
-      `¿Buscas ${producto.toLowerCase()}? Somos la opción que necesitas. ¡Compruébalo!`,
-      `${cliente} inteligente elige ${producto}. ¿Qué esperas para probarlo?`
+      `Las mejores ${producto.toLowerCase()}. ¡Vení a probarlas!`,
+      `${producto} de calidad premium. Descubrí la diferencia.`,
+      `¿Buscás ${producto.toLowerCase()}? Tenemos lo que necesitás.`,
+      `${producto} que marcan la diferencia. ¡Conocé nuestra selección!`,
+      `Tu rendimiento merece lo mejor. Explorá nuestra línea de ${producto.toLowerCase()}.`,
+      `${producto} de primera calidad. ¡Visitanos y comprobalo!`
     ];
     
     return templates[Math.floor(Math.random() * templates.length)];
