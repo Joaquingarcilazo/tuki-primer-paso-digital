@@ -12,6 +12,36 @@ interface PreviewProps {
   token: string;
 }
 
+/* ---------- Extraer producto/servicio del texto del usuario ---------- */
+function extractProductService(userInput: string): string {
+  const input = userInput.toLowerCase().trim();
+  
+  // Patrones comunes para extraer el producto/servicio
+  const patterns = [
+    /tengo (?:una?|un) (.+)/,
+    /vendo (.+)/,
+    /ofrezco (.+)/,
+    /mi negocio es (?:de |una? |un )?(.+)/,
+    /soy (.+)/,
+    /trabajo (?:en |con |de )?(.+)/,
+    /me dedico a (.+)/,
+    /hago (.+)/
+  ];
+
+  for (const pattern of patterns) {
+    const match = input.match(pattern);
+    if (match && match[1]) {
+      let product = match[1].trim();
+      // Limpiar artículos innecesarios al final
+      product = product.replace(/\s+en\s+.+$/, '');
+      return product;
+    }
+  }
+
+  // Si no encuentra patrón, devolver el input limpio
+  return input.replace(/^(tengo|soy|vendo|ofrezco|mi negocio es|trabajo|me dedico a|hago)\s*/i, '');
+}
+
 const PreviewAd: React.FC<PreviewProps> = ({ creativeId, onContinue, token }) => {
   const [previewHtml, setPreviewHtml] = useState<string>('');
   const [secondsLeft, setSecondsLeft] = useState<number>(60);
