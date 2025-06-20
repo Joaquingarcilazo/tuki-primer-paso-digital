@@ -20,4 +20,5 @@ export interface Campaign {
   presupuesto: string;
   duracion: string;
   canal: string;
+  imagenes?: string[]; // Agregamos las imágenes generadas
 }
