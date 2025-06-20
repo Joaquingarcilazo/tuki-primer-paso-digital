@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
-import { DollarSign, TrendingUp, Eye, MousePointer, ShoppingCart, AlertTriangle, CheckCircle, AlertCircle, Bot } from 'lucide-react';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer } from 'recharts';
+import { DollarSign, TrendingUp, Eye, MousePointer, ShoppingCart, AlertTriangle, CheckCircle, AlertCircle } from 'lucide-react';
 
 interface CampaignDashboardProps {
   adAccountId: string;
@@ -118,6 +120,26 @@ const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
   const cpc = clicks > 0 ? gastoTotal / clicks : 0;
   const ctr = impresiones > 0 ? (clicks / impresiones) * 100 : 0;
 
+  // Datos para el gráfico
+  const chartData = [
+    {
+      name: 'Inversión',
+      value: gastoTotal,
+      fill: '#ef4444' // red-500
+    },
+    {
+      name: 'Ventas',
+      value: ventasEstimadas,
+      fill: '#22c55e' // green-500
+    }
+  ];
+
+  const chartConfig = {
+    value: {
+      label: "Monto USD",
+    },
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -195,6 +217,31 @@ const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
         </Card>
       </div>
 
+      {/* Gráfico de comparación */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Inversión vs Ventas</CardTitle>
+          <CardDescription>
+            Comparación visual de tu inversión y las ventas generadas
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ChartContainer config={chartConfig} className="h-[200px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                <XAxis dataKey="name" />
+                <YAxis />
+                <ChartTooltip 
+                  content={<ChartTooltipContent />}
+                  formatter={(value: number) => [`$${value.toFixed(2)}`, 'Monto']}
+                />
+                <Bar dataKey="value" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </ChartContainer>
+        </CardContent>
+      </Card>
+
       {/* Métricas de rendimiento */}
       <Card>
         <CardHeader>
@@ -233,28 +280,38 @@ const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
             </div>
           </div>
 
-          {/* Barra de progreso ROI */}
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm">
-              <span>Progreso hacia rentabilidad</span>
-              <span>{Math.min(Math.max((ventasEstimadas / gastoTotal) * 100, 0), 200).toFixed(0)}%</span>
+          {/* Barra de progreso ROI mejorada */}
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="text-sm font-medium">
+                {ventasEstimadas >= gastoTotal ? '🎉 ¡Estás ganando dinero!' : '💪 Progreso hacia la rentabilidad'}
+              </span>
+              <span className={`text-sm font-bold ${ventasEstimadas >= gastoTotal ? 'text-green-600' : 'text-blue-600'}`}>
+                {Math.min(Math.max((ventasEstimadas / gastoTotal) * 100, 0), 200).toFixed(0)}%
+              </span>
             </div>
             <Progress 
               value={Math.min(Math.max((ventasEstimadas / gastoTotal) * 100, 0), 100)} 
-              className="h-2"
+              className={`h-3 ${ventasEstimadas >= gastoTotal ? '[&>div]:bg-green-500' : '[&>div]:bg-blue-500'}`}
             />
-            <p className="text-xs text-muted-foreground">
+            <div className="flex justify-between text-xs">
+              <span className="text-red-600">Inversión: ${gastoTotal.toFixed(2)}</span>
+              <span className="text-green-600">Ventas: ${ventasEstimadas.toFixed(2)}</span>
+            </div>
+            <p className={`text-sm text-center font-medium ${
+              ventasEstimadas >= gastoTotal ? 'text-green-700' : 'text-blue-700'
+            }`}>
               {ventasEstimadas >= gastoTotal 
-                ? '¡Tu campaña es rentable!' 
-                : `Necesitás $${(gastoTotal - ventasEstimadas).toFixed(2)} más en ventas para ser rentable`
+                ? `¡Increíble! Ya ganaste $${(ventasEstimadas - gastoTotal).toFixed(2)} 💰` 
+                : `Solo necesitás $${(gastoTotal - ventasEstimadas).toFixed(2)} más en ventas para ser rentable`
               }
             </p>
           </div>
         </CardContent>
       </Card>
 
-      {/* Resumen ejecutivo con estilo de cards corregido */}
-      <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-3">
+      {/* Resumen ejecutivo reducido a 2 cards */}
+      <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2">
         {/* Estado de la campaña */}
         <Card className={`${
           roi >= 20 ? 'bg-green-50 border-green-200' :
@@ -284,7 +341,6 @@ const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
           </CardContent>
         </Card>
 
-        {/* Condicional para conversiones */}
         {numConversiones === 0 && gastoTotal > 0 ? (
           <Card className="bg-amber-50 border-amber-200">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -312,20 +368,6 @@ const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
             </CardContent>
           </Card>
         ) : null}
-
-        {/* Info de datos simulados */}
-        <Card className="bg-blue-50 border-blue-200">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Datos Simulados</CardTitle>
-            <Bot className="h-4 w-4 text-blue-600" />
-          </CardHeader>
-          <CardContent>
-            <p className="text-blue-700 text-sm">
-              Este dashboard muestra datos realistas simulados para demostración. 
-              En producción se conectaría con Meta Marketing API.
-            </p>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );
