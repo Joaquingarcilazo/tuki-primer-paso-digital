@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -26,20 +25,62 @@ interface CampaignGeneratorProps {
   onBack: () => void;
 }
 
-// Función utilitaria para corrección gramatical mínima
+/* ---------- 1. Utilidad opcional de gramática mínima ---------- */
 function ensureSpanishGrammar(text: string): string {
   let t = text.trim();
   t = t.charAt(0).toUpperCase() + t.slice(1);
-  if (t.endsWith('?')) {
-    if (!t.startsWith('¿')) t = '¿' + t;
-  } else if (t.endsWith('!')) {
-    if (!t.startsWith('¡')) t = '¡' + t;
-  } else if (!/[.!?]$/.test(t)) {
-    t += '.';
-  }
-  t = t.replace(/\btu\b/g, 'tú');
-  return t;
+  if (t.endsWith('?')) { if (!t.startsWith('¿')) t = '¿' + t; }
+  else if (t.endsWith('!')) { if (!t.startsWith('¡')) t = '¡' + t; }
+  else if (!/[.!?]$/.test(t)) { t += '.'; }
+  return t.replace(/\btu\b/g, 'tú');
 }
+
+/* ---------- 2. Título dirigido al consumidor ---------- */
+const generateTitle = (producto: string, cliente: string): string => {
+  return `¿Necesitás ${producto}? ¡Contactanos!`;
+};
+
+/* ---------- 3. Texto persuasivo coherente con el título ---------- */
+const generateAdText = (
+  producto: string,
+  cliente: string,
+  objetivo: string,
+  title: string
+): string => {
+
+  const templates: Record<string, string[]> = {
+    /* OBJETIVO: VISIBILIDAD */
+    'Aumentar visibilidad de mi marca': [
+      `Descubrí nuestra línea de ${producto} y sentí la diferencia. ${title}`,
+      `Tu próximo ${producto} está acá. Elegí calidad y estilo hoy mismo.`,
+      `Innovación y diseño en ${producto}. Mirá lo que tenemos preparado para vos.`,
+      `Llevá tu juego al siguiente nivel con nuestros ${producto}. Conocenos ahora.`,
+      `Somos referentes en ${producto}. Visitanos y comprobalo vos mismo.`
+    ],
+
+    /* OBJETIVO: CONSULTAS / LEADS */
+    'Generar más leads/consultas': [
+      `Escribinos y recibí asesoramiento gratis sobre nuestros ${producto}. ${title}`,
+      `Consultá hoy por nuestros ${producto} y obtené respuestas al instante.`,
+      `Contanos qué ${producto} buscás y te ayudamos a elegir la mejor opción.`,
+      `Obtené información detallada y presupuestos sin compromiso. ¡Hablá con nosotros!`,
+      `Estamos online para resolver tus dudas sobre ${producto}. ¡Consultanos ahora!`
+    ],
+
+    /* OBJETIVO: VENTAS DIRECTAS */
+    'Aumentar ventas directas': [
+      `Aprovechá esta promo en ${producto}. Stock limitado, ¡comprá ahora!`,
+      `Financiación en cuotas y envío sin cargo en todos los ${producto}.`,
+      `Comprá hoy tus ${producto} con descuento exclusivo y recibilos en 24 h.`,
+      `Solo por tiempo limitado: 20 % off en ${producto}. No te lo pierdas.`,
+      `Llevate tus nuevos ${producto} con garantía total y precio especial.`
+    ]
+  };
+
+  const lista = templates[objetivo] || templates['Aumentar visibilidad de mi marca'];
+  const raw   = lista[Math.floor(Math.random() * lista.length)];
+  return ensureSpanishGrammar(raw);
+};
 
 const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({ userData, onBack }) => {
   const [isGenerating, setIsGenerating] = useState(true);
@@ -69,15 +110,15 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({ userData, onBack 
     const canal = hasInstagramFacebook ? 'Meta Ads (Instagram/Facebook)' : 'Google Ads';
     
     // Generar título y texto con corrección automática
-    const rawTitle = generateTitle(data.productoServicio, data.objetivoMarketing);
+    const rawTitle = generateTitle(data.productoServicio, data.clienteIdeal);
     const titulo = ensureSpanishGrammar(rawTitle);
-    const rawText = generateAdText(
+    
+    const texto = generateAdText(
       data.productoServicio,
       data.clienteIdeal,
       data.objetivoMarketing,
-      rawTitle
+      titulo
     );
-    const texto = ensureSpanishGrammar(rawText);
     
     // Generar público objetivo
     const publicoObjetivo = generateTargetAudience(data.clienteIdeal);
@@ -93,69 +134,6 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({ userData, onBack 
       duracion: '7 días',
       canal
     };
-  };
-
-  const generateTitle = (producto: string, objetivo: string): string => {
-    const templates = {
-      'Aumentar visibilidad de mi marca': [
-        `Descubre ${producto.toLowerCase()} que está revolucionando el mercado`,
-        `¿Conocés ${producto.toLowerCase()}? Te va a sorprender`,
-        `La solución que buscabas: ${producto.toLowerCase()}`,
-        `${producto} - La innovación que necesitabas`,
-        `Conocé ${producto.toLowerCase()} y transformá tu experiencia`
-      ],
-      'Generar más leads/consultas': [
-        `Consulta gratuita sobre ${producto.toLowerCase()}`,
-        `Obtené más información sobre ${producto.toLowerCase()}`,
-        `¿Necesitás ${producto.toLowerCase()}? Contactanos`,
-        `${producto} - Consulta sin compromiso`,
-        `Solicitá información sobre ${producto.toLowerCase()} ahora`
-      ],
-      'Aumentar ventas directas': [
-        `Comprá ${producto.toLowerCase()} con descuento especial`,
-        `Oferta limitada: ${producto.toLowerCase()}`,
-        `Aprovechá esta oportunidad única con ${producto.toLowerCase()}`,
-        `${producto} - Precio especial por tiempo limitado`,
-        `No te pierdas esta oferta de ${producto.toLowerCase()}`
-      ]
-    };
-    
-    const options = templates[objetivo as keyof typeof templates] || templates['Aumentar visibilidad de mi marca'];
-    return options[Math.floor(Math.random() * options.length)];
-  };
-
-  const generateAdText = (
-    producto: string,
-    cliente: string,
-    objetivo: string,
-    title: string
-  ): string => {
-    const templates: Record<string, string[]> = {
-      'Aumentar visibilidad de mi marca': [
-        `Con tu anuncio "${title}", hacé que más personas conozcan tu ${producto}. ¡Contactanos ahora!`,
-        `Que tu ${producto} destaque con "${title}". Potenciá tu imagen y llegá a nuevos clientes.`,
-        `Con "${title}", llevá tu ${producto} al próximo nivel. Visitá nuestro sitio y descubrí cómo.`,
-        `Tu ${producto} merece ser visto. Con "${title}", maximizá tu visibilidad sin esfuerzo.`,
-        `Mostrá lo mejor de tu ${producto} con "${title}" y sorprendé a tu público objetivo.`
-      ],
-      'Generar más leads/consultas': [
-        `¿Querés más consultas sobre tu ${producto}? Con "${title}" recibí leads calificados hoy mismo.`,
-        `Con "${title}" atraé a clientes interesados en tu ${producto}. Dejanos tus datos ¡sin compromiso!`,
-        `Hacé que quien busque ${producto} te encuentre con "${title}". Invitá a tus clientes a contactarse.`,
-        `Tu ${producto} al alcance de quien lo necesita. "${title}" genera leads directos para vos.`,
-        `Dejanos tu consulta sobre ${producto} en "${title}" y te contactamos al instante.`
-      ],
-      'Aumentar ventas directas': [
-        `Vendé más ${producto} con "${title}". Oferta por tiempo limitado. ¡Aprovechá hoy mismo!`,
-        `Con "${title}", impulsá las ventas de tu ${producto}. Stock limitado: comprá ya.`,
-        `Tus ${producto} se venden mejor con "${title}". Pagá en cuotas y recibí envío sin cargo.`,
-        `Promoción especial para tu ${producto}. Con "${title}", conseguí un 20% de descuento hoy.`,
-        `Mejorá tus ventas de ${producto} ahora. Con "${title}", convertí clics en compras.`
-      ]
-    };
-
-    const list = templates[objetivo] || templates['Aumentar visibilidad de mi marca'];
-    return list[Math.floor(Math.random() * list.length)];
   };
 
   const generateTargetAudience = (cliente: string): string => {
