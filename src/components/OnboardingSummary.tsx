@@ -1,8 +1,8 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Edit3, Sparkles, CheckCircle } from 'lucide-react';
+import CampaignGenerator from './CampaignGenerator';
 
 interface UserData {
   productoServicio: string;
@@ -17,10 +17,19 @@ interface OnboardingSummaryProps {
 }
 
 const OnboardingSummary: React.FC<OnboardingSummaryProps> = ({ userData, onEdit }) => {
+  const [showCampaignGenerator, setShowCampaignGenerator] = useState(false);
+
   const handleGenerateCampaign = () => {
-    // Por ahora solo mostramos un mensaje, en el futuro se conectará al generador de campañas
-    alert('¡Genial! La funcionalidad de generación de campañas estará disponible pronto. Por ahora, tu briefing está guardado y listo para usar 🚀');
+    setShowCampaignGenerator(true);
   };
+
+  const handleBackToSummary = () => {
+    setShowCampaignGenerator(false);
+  };
+
+  if (showCampaignGenerator) {
+    return <CampaignGenerator userData={userData} onBack={handleBackToSummary} />;
+  }
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
