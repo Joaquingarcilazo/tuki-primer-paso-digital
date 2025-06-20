@@ -104,7 +104,15 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({ userData, onBack 
   };
 
   const generateAdText = (producto: string, cliente: string): string => {
-    return `¿Sos ${cliente.toLowerCase()}? Entonces ${producto.toLowerCase()} es perfecto para vos. Descubrí por qué miles de personas ya eligieron nuestra propuesta. ¡No te quedes afuera de esta oportunidad!`;
+    const templates = [
+      `¿Eres ${cliente.toLowerCase()}? ${producto} es para ti. ¡Descubre por qué!`,
+      `${producto} perfecto para ${cliente.toLowerCase()}. Únete a miles que ya eligieron calidad.`,
+      `Tu solución ideal: ${producto}. Especialmente diseñado para ${cliente.toLowerCase()}.`,
+      `¿Buscas ${producto.toLowerCase()}? Somos la opción que necesitas. ¡Compruébalo!`,
+      `${cliente} inteligente elige ${producto}. ¿Qué esperas para probarlo?`
+    ];
+    
+    return templates[Math.floor(Math.random() * templates.length)];
   };
 
   const generateTargetAudience = (cliente: string): string => {
