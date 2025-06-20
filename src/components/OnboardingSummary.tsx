@@ -3,13 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Edit3, Sparkles, CheckCircle } from 'lucide-react';
 import CampaignGenerator from './CampaignGenerator';
-
-interface UserData {
-  productoServicio: string;
-  clienteIdeal: string;
-  objetivoMarketing: string;
-  redesSociales: string[];
-}
+import { UserData } from '../types/campaign';
 
 interface OnboardingSummaryProps {
   userData: UserData;

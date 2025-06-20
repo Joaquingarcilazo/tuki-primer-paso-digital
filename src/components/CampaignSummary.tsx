@@ -1,24 +1,8 @@
-
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Edit3, Rocket, Target, DollarSign, Calendar, Radio } from 'lucide-react';
-
-interface Campaign {
-  titulo: string;
-  texto: string;
-  publicoObjetivo: string;
-  presupuesto: string;
-  duracion: string;
-  canal: string;
-}
-
-interface UserData {
-  productoServicio: string;
-  clienteIdeal: string;
-  objetivoMarketing: string;
-  redesSociales: string[];
-}
+import { Campaign, UserData } from '../types/campaign';
 
 interface CampaignSummaryProps {
   campaign: Campaign;

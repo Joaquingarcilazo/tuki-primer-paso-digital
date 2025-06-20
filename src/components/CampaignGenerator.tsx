@@ -3,22 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Edit3, Rocket, Sparkles } from 'lucide-react';
 import CampaignSummary from './CampaignSummary';
-
-interface UserData {
-  productoServicio: string;
-  clienteIdeal: string;
-  objetivoMarketing: string;
-  redesSociales: string[];
-}
-
-interface Campaign {
-  titulo: string;
-  texto: string;
-  publicoObjetivo: string;
-  presupuesto: string;
-  duracion: string;
-  canal: string;
-}
+import { UserData, Campaign, AudienceData } from '../types/campaign';
 
 interface CampaignGeneratorProps {
   userData: UserData;
@@ -82,6 +67,51 @@ const generateAdText = (
   return ensureSpanishGrammar(raw);
 };
 
+/* ---------- 4. Generar datos de audiencia estructurados ---------- */
+const generateAudienceData = (cliente: string): AudienceData => {
+  const ageRanges = [
+    { min: 18, max: 35 },
+    { min: 25, max: 45 },
+    { min: 30, max: 50 },
+    { min: 35, max: 55 }
+  ];
+  
+  const locations = [
+    'Argentina',
+    'Buenos Aires, Argentina',
+    'Principales ciudades de Argentina'
+  ];
+  
+  const randomAgeRange = ageRanges[Math.floor(Math.random() * ageRanges.length)];
+  const randomLocation = locations[Math.floor(Math.random() * locations.length)];
+  
+  return {
+    edadMin: randomAgeRange.min,
+    edadMax: randomAgeRange.max,
+    ubicacion: randomLocation,
+    intereses: cliente.toLowerCase()
+  };
+};
+
+/* ---------- 5. Formatear audiencia para mostrar ---------- */
+const formatAudienceData = (audienceData: AudienceData): string => {
+  const parts = [];
+  
+  if (audienceData.edadMin && audienceData.edadMax) {
+    parts.push(`${audienceData.edadMin}-${audienceData.edadMax} años`);
+  }
+  
+  if (audienceData.ubicacion) {
+    parts.push(audienceData.ubicacion);
+  }
+  
+  if (audienceData.intereses) {
+    parts.push(`interesados en: ${audienceData.intereses}`);
+  }
+  
+  return parts.join(', ');
+};
+
 const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({ userData, onBack }) => {
   const [isGenerating, setIsGenerating] = useState(true);
   const [campaign, setCampaign] = useState<Campaign | null>(null);
@@ -120,8 +150,9 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({ userData, onBack 
       titulo
     );
     
-    // Generar público objetivo
-    const publicoObjetivo = generateTargetAudience(data.clienteIdeal);
+    // Generar público objetivo usando la nueva estructura
+    const audienceData = generateAudienceData(data.clienteIdeal);
+    const publicoObjetivo = formatAudienceData(audienceData);
     
     // Presupuesto sugerido basado en el objetivo
     const presupuesto = generateBudget(data.objetivoMarketing);
@@ -134,17 +165,6 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({ userData, onBack 
       duracion: '7 días',
       canal
     };
-  };
-
-  const generateTargetAudience = (cliente: string): string => {
-    // Extraer información básica del cliente ideal
-    const ageRanges = ['18-35 años', '25-45 años', '30-50 años', '35-55 años'];
-    const locations = ['Argentina', 'Buenos Aires, Argentina', 'Principales ciudades de Argentina'];
-    
-    const randomAge = ageRanges[Math.floor(Math.random() * ageRanges.length)];
-    const randomLocation = locations[Math.floor(Math.random() * locations.length)];
-    
-    return `${randomAge}, ${randomLocation}, interesados en: ${cliente.toLowerCase()}`;
   };
 
   const generateBudget = (objetivo: string): string => {
