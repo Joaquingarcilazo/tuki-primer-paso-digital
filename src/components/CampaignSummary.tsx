@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Edit3, Rocket, Target, DollarSign, Calendar, Radio, Image } from 'lucide-react';
 import { Campaign, UserData } from '../types/campaign';
+import { getProductImage } from '@/services/ai';
+import { isImageRelevant } from '@/helpers/relevance';
 import CampaignImageGenerator from './CampaignImageGenerator';
 
 interface CampaignSummaryProps {
@@ -15,6 +17,19 @@ interface CampaignSummaryProps {
 const CampaignSummary: React.FC<CampaignSummaryProps> = ({ campaign, userData, onBack, onEdit }) => {
   const [showImageGenerator, setShowImageGenerator] = useState(false);
   const [campaignWithImages, setCampaignWithImages] = useState<Campaign>(campaign);
+  const [imgUrl, setImgUrl] = useState<string>('');
+
+  useEffect(() => {
+    (async () => {
+      const url = await getProductImage(userData.productoServicio);
+      if (isImageRelevant(url, userData.productoServicio)) {
+        setImgUrl(url);
+      } else {
+        // Fallback: logo o imagen por defecto
+        setImgUrl('/images/placeholder-product.jpg');
+      }
+    })();
+  }, [userData.productoServicio]);
 
   const handleGenerateImages = () => {
     setShowImageGenerator(true);
@@ -91,6 +106,23 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({ campaign, userData, o
               <p className="text-gray-700 leading-relaxed">{campaignWithImages.texto}</p>
             </div>
           </div>
+
+          {/* Auto-generated product image */}
+          {imgUrl && (
+            <div className="space-y-3">
+              <div className="flex items-center space-x-2">
+                <span className="text-2xl">🤖</span>
+                <h3 className="text-lg font-semibold text-gray-800">Imagen del producto (generada automáticamente)</h3>
+              </div>
+              <div className="bg-cyan-50 rounded-lg p-4 border-l-4 border-cyan-500">
+                <img
+                  src={imgUrl}
+                  alt={`Imagen generada para ${userData.productoServicio}`}
+                  className="w-full max-w-md h-48 object-cover rounded-lg shadow-sm mx-auto"
+                />
+              </div>
+            </div>
+          )}
 
           {/* Imágenes generadas */}
           {campaignWithImages.imagenes && campaignWithImages.imagenes.length > 0 && (
