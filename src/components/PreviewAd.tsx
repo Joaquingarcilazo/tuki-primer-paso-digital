@@ -32,18 +32,27 @@ const PreviewAd: React.FC<PreviewProps> = ({ creativeId, onContinue, token }) =>
         const metaToken = token || process.env.META_TOKEN;
         
         if (!metaToken) {
-          throw new Error('Token de Meta no disponible');
+          console.warn('⚠️ Token de Meta no disponible, usando preview mock');
+          setPreviewHtml('<div style="padding: 20px; background: #f0f0f0; border-radius: 8px; text-align: center;"><h3>Vista previa del anuncio</h3><p>Creative ID: ' + creativeId + '</p><p>🎯 Tu anuncio se mostrará aquí cuando esté listo</p></div>');
+          setIsLoading(false);
+          return;
         }
 
         const response = await fetch(
           `https://graph.facebook.com/v19.0/${creativeId}/previews?ad_format=DESKTOP_FEED_STANDARD&access_token=${metaToken}`
         );
 
-        const data = await response.json();
-
+        // Verificar si la respuesta es válida antes de intentar parsear JSON
         if (!response.ok) {
-          throw new Error(data.error?.message || 'Error al obtener vista previa');
+          throw new Error(`Error HTTP: ${response.status}`);
         }
+
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          throw new Error('Respuesta no es JSON válido');
+        }
+
+        const data = await response.json();
 
         if (data.data && data.data.length > 0) {
           setPreviewHtml(data.data[0].body);
@@ -53,11 +62,23 @@ const PreviewAd: React.FC<PreviewProps> = ({ creativeId, onContinue, token }) =>
         }
       } catch (err) {
         console.error('❌ Error obteniendo vista previa:', err);
-        setError(err instanceof Error ? err.message : 'Error desconocido');
+        const errorMsg = err instanceof Error ? err.message : 'Error desconocido';
+        setError(errorMsg);
+        
+        // Mostrar preview mock en caso de error
+        setPreviewHtml(`
+          <div style="padding: 20px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; text-align: center;">
+            <h3 style="color: #856404;">Vista previa simulada</h3>
+            <p style="color: #856404;">Creative ID: ${creativeId}</p>
+            <p style="color: #856404;">🎯 Tu anuncio se mostrará similar a esto en Meta</p>
+            <small style="color: #6c757d;">Error: ${errorMsg}</small>
+          </div>
+        `);
+        
         toast({
-          title: "Error en vista previa",
-          description: "No se pudo cargar la vista previa del anuncio",
-          variant: "destructive"
+          title: "Vista previa simulada",
+          description: "Mostrando preview de ejemplo - el anuncio real se verá en Meta",
+          variant: "default"
         });
       } finally {
         setIsLoading(false);
@@ -69,9 +90,12 @@ const PreviewAd: React.FC<PreviewProps> = ({ creativeId, onContinue, token }) =>
     }
   }, [creativeId, token]);
 
-  // Efecto para el countdown
+  // Efecto para el countdown - SIEMPRE debe ejecutarse
   useEffect(() => {
+    console.log(`⏰ Countdown iniciado: ${secondsLeft} segundos restantes`);
+    
     if (secondsLeft <= 0) {
+      console.log('⏰ Tiempo agotado - continuando automáticamente');
       handleContinue();
       return;
     }
@@ -79,38 +103,27 @@ const PreviewAd: React.FC<PreviewProps> = ({ creativeId, onContinue, token }) =>
     const interval = setInterval(() => {
       setSecondsLeft(prev => {
         const newValue = prev - 1;
+        console.log(`⏰ Segundos restantes: ${newValue}`);
+        
         if (newValue <= 0) {
           clearInterval(interval);
-          handleContinue();
+          setTimeout(() => handleContinue(), 100); // Pequeño delay para evitar problemas de timing
           return 0;
         }
         return newValue;
       });
     }, 1000);
 
-    return () => clearInterval(interval);
+    return () => {
+      console.log('🧹 Limpiando intervalo del countdown');
+      clearInterval(interval);
+    };
   }, [secondsLeft, handleContinue]);
 
   const handleSkip = () => {
     console.log('⏭️ Usuario saltó la vista previa');
     handleContinue();
   };
-
-  if (error) {
-    return (
-      <div className="max-w-4xl mx-auto p-6">
-        <Card className="bg-red-50 border-red-200 p-8 text-center">
-          <div className="text-red-600 mb-4">
-            <h3 className="text-lg font-semibold">Error al cargar vista previa</h3>
-            <p className="text-sm mt-2">{error}</p>
-          </div>
-          <Button onClick={handleContinue} className="mt-4">
-            Continuar de todas formas
-          </Button>
-        </Card>
-      </div>
-    );
-  }
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
@@ -172,16 +185,12 @@ const PreviewAd: React.FC<PreviewProps> = ({ creativeId, onContinue, token }) =>
                 <Skeleton className="h-4 w-1/2" />
               </div>
             </div>
-          ) : previewHtml ? (
+          ) : (
             <div className="bg-gray-50 rounded-lg p-4 border">
               <div 
                 dangerouslySetInnerHTML={{ __html: previewHtml }}
                 className="meta-ad-preview"
               />
-            </div>
-          ) : (
-            <div className="text-center py-8 text-gray-500">
-              <p>No se pudo cargar la vista previa</p>
             </div>
           )}
         </div>
@@ -190,10 +199,10 @@ const PreviewAd: React.FC<PreviewProps> = ({ creativeId, onContinue, token }) =>
       {/* Info adicional */}
       <div className="text-center text-sm text-gray-500">
         <p>
-          🤖 Esta vista previa es generada automáticamente por Meta Marketing API
+          🤖 {error ? 'Vista previa simulada' : 'Esta vista previa es generada automáticamente por Meta Marketing API'}
         </p>
         <p className="mt-1">
-          Segundos restantes: <span className="font-mono font-bold">{secondsLeft}</span>
+          Segundos restantes: <span className="font-mono font-bold text-orange-600">{secondsLeft}</span>
         </p>
       </div>
     </div>
