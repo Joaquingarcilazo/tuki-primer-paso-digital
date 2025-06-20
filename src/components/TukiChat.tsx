@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -25,21 +26,25 @@ const questions = [
   {
     id: 'productoServicio',
     text: '¡Perfecto! Empecemos conociendo tu negocio. ¿Qué tipo de producto o servicio ofrecés? Contame con detalles para poder ayudarte mejor 😊',
-    placeholder: 'Por ejemplo: Vendo ropa deportiva para mujeres, soy contador, tengo una panadería...'
+    placeholder: 'Por ejemplo: Vendo ropa deportiva para mujeres, soy contador, tengo una panadería...',
+    type: 'textarea'
   },
   {
     id: 'clienteIdeal',
     text: '¡Genial! Ahora contame, ¿quién es tu cliente ideal? Pensá en esa persona que realmente necesita lo que ofrecés 🎯',
-    placeholder: 'Por ejemplo: Mujeres de 25-40 años que hacen ejercicio, pequeños empresarios, familias del barrio...'
+    placeholder: 'Por ejemplo: Mujeres de 25-40 años que hacen ejercicio, pequeños empresarios, familias del barrio...',
+    type: 'textarea'
   },
   {
     id: 'objetivoMarketing',
     text: 'Excelente. ¿Cuál es tu principal objetivo de marketing en este momento? 🚀',
+    type: 'options',
     options: ['Aumentar visibilidad de mi marca', 'Generar más leads/consultas', 'Aumentar ventas directas']
   },
   {
     id: 'redesSociales',
     text: '¡Última pregunta! ¿Tenés redes sociales activas? Seleccioná todas las que usás 📱',
+    type: 'multiple',
     options: ['Instagram', 'Facebook', 'Google My Business', 'Email Marketing', 'No tengo redes activas aún']
   }
 ];
@@ -116,75 +121,87 @@ const TukiChat: React.FC = () => {
 
     // Guardar respuesta
     const questionKey = questions[currentQuestion].id as keyof UserData;
-    setUserData(prev => ({
-      ...prev,
+    const updatedUserData = {
+      ...userData,
       [questionKey]: inputValue
-    }));
+    };
+    setUserData(updatedUserData);
 
     setInputValue('');
-    setCurrentQuestion(prev => prev + 1);
+    
+    // Avanzar a la siguiente pregunta
+    const nextQuestion = currentQuestion + 1;
+    setCurrentQuestion(nextQuestion);
 
     // Mostrar siguiente pregunta o completar
     setTimeout(() => {
-      if (currentQuestion + 1 < questions.length) {
+      if (nextQuestion < questions.length) {
         showNextQuestion();
       } else {
-        completeOnboarding();
+        completeOnboarding(updatedUserData);
       }
     }, 1000);
   };
 
-  const handleOptionSelect = (option: string, isMultiple = false) => {
-    const questionKey = questions[currentQuestion].id as keyof UserData;
-    
-    if (isMultiple) {
-      setUserData(prev => ({
-        ...prev,
-        redesSociales: prev.redesSociales.includes(option) 
-          ? prev.redesSociales.filter(item => item !== option)
-          : [...prev.redesSociales, option]
-      }));
-    } else {
-      const userMessage: Message = {
-        id: Date.now().toString(),
-        text: option,
-        isBot: false,
-        timestamp: new Date()
-      };
-
-      setMessages(prev => [...prev, userMessage]);
-
-      setUserData(prev => ({
-        ...prev,
-        [questionKey]: option
-      }));
-
-      setCurrentQuestion(prev => prev + 1);
-
-      setTimeout(() => {
-        if (currentQuestion + 1 < questions.length) {
-          showNextQuestion();
-        } else {
-          completeOnboarding();
-        }
-      }, 1000);
-    }
-  };
-
-  const completeRedesSociales = () => {
-    const selectedOptions = userData.redesSociales.join(', ');
+  const handleOptionSelect = (option: string) => {
     const userMessage: Message = {
       id: Date.now().toString(),
-      text: selectedOptions || 'No tengo redes activas aún',
+      text: option,
       isBot: false,
       timestamp: new Date()
     };
 
     setMessages(prev => [...prev, userMessage]);
-    completeOnboarding();
+
+    const questionKey = questions[currentQuestion].id as keyof UserData;
+    const updatedUserData = {
+      ...userData,
+      [questionKey]: option
+    };
+    setUserData(updatedUserData);
+
+    const nextQuestion = currentQuestion + 1;
+    setCurrentQuestion(nextQuestion);
+
+    setTimeout(() => {
+      if (nextQuestion < questions.length) {
+        showNextQuestion();
+      } else {
+        completeOnboarding(updatedUserData);
+      }
+    }, 1000);
   };
 
-  const completeOnboarding = () => {
+  const handleMultipleSelect = (option: string) => {
+    const updatedRedesSociales = userData.redesSociales.includes(option) 
+      ? userData.redesSociales.filter(item => item !== option)
+      : [...userData.redesSociales, option];
+    
+    setUserData(prev => ({
+      ...prev,
+      redesSociales: updatedRedesSociales
+    }));
+  };
+
+  const completeRedesSociales = () => {
+    const selectedOptions = userData.redesSociales.length > 0 
+      ? userData.redesSociales.join(', ') 
+      : 'No tengo redes activas aún';
+    
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      text: selectedOptions,
+      isBot: false,
+      timestamp: new Date()
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    
+    const updatedUserData = { ...userData };
+    completeOnboarding(updatedUserData);
+  };
+
+  const completeOnboarding = (finalUserData: UserData) => {
     setIsTyping(true);
     setTimeout(() => {
       const completionMessage: Message = {
@@ -197,7 +214,7 @@ const TukiChat: React.FC = () => {
       setIsTyping(false);
       
       // Guardar en localStorage
-      localStorage.setItem('tukiUserData', JSON.stringify(userData));
+      localStorage.setItem('tukiUserData', JSON.stringify(finalUserData));
       
       setTimeout(() => {
         setIsComplete(true);
@@ -231,8 +248,7 @@ const TukiChat: React.FC = () => {
   };
 
   const currentQuestionData = questions[currentQuestion];
-  const isLastQuestion = currentQuestion === questions.length - 1;
-  const isRedesSocialesQuestion = currentQuestionData?.id === 'redesSociales';
+  const isMultipleQuestion = currentQuestionData?.type === 'multiple';
 
   if (isComplete) {
     return <OnboardingSummary userData={userData} onEdit={handleEditResponses} />;
@@ -266,47 +282,43 @@ const TukiChat: React.FC = () => {
         {/* Input Area */}
         {currentQuestion < questions.length && !isTyping && (
           <div className="border-t bg-gray-50/50 p-4">
-            {currentQuestionData?.options ? (
-              <div className="space-y-3">
-                {isRedesSocialesQuestion ? (
-                  <>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                      {currentQuestionData.options.map((option) => (
-                        <Button
-                          key={option}
-                          variant={userData.redesSociales.includes(option) ? "default" : "outline"}
-                          onClick={() => handleOptionSelect(option, true)}
-                          className="text-sm"
-                        >
-                          {option}
-                        </Button>
-                      ))}
-                    </div>
-                    <Button 
-                      onClick={completeRedesSociales}
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                    >
-                      Continuar
-                    </Button>
-                  </>
-                ) : (
-                  <div className="grid gap-2">
-                    {currentQuestionData.options.map((option) => (
-                      <Button
-                        key={option}
-                        variant="outline"
-                        onClick={() => handleOptionSelect(option)}
-                        className="justify-start text-left h-auto p-4 hover:bg-blue-50"
-                      >
-                        {option}
-                      </Button>
-                    ))}
-                  </div>
-                )}
+            {currentQuestionData?.type === 'options' ? (
+              <div className="grid gap-2">
+                {currentQuestionData.options?.map((option) => (
+                  <Button
+                    key={option}
+                    variant="outline"
+                    onClick={() => handleOptionSelect(option)}
+                    className="justify-start text-left h-auto p-4 hover:bg-blue-50"
+                  >
+                    {option}
+                  </Button>
+                ))}
               </div>
+            ) : currentQuestionData?.type === 'multiple' ? (
+              <>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-4">
+                  {currentQuestionData.options?.map((option) => (
+                    <Button
+                      key={option}
+                      variant={userData.redesSociales.includes(option) ? "default" : "outline"}
+                      onClick={() => handleMultipleSelect(option)}
+                      className="text-sm"
+                    >
+                      {option}
+                    </Button>
+                  ))}
+                </div>
+                <Button 
+                  onClick={completeRedesSociales}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  Continuar
+                </Button>
+              </>
             ) : (
               <div className="flex space-x-2">
-                {currentQuestionData?.id === 'productoServicio' || currentQuestionData?.id === 'clienteIdeal' ? (
+                {currentQuestionData?.type === 'textarea' ? (
                   <Textarea
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
