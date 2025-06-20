@@ -50,7 +50,7 @@ const questions = [
 
 const TukiChat: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [currentQuestion, setCurrentQuestion] = useState(-1); // Empezar en -1 para forzar reinicio
+  const [currentQuestion, setCurrentQuestion] = useState(-1);
   const [inputValue, setInputValue] = useState('');
   const [userData, setUserData] = useState<UserData>({
     productoServicio: '',
@@ -64,11 +64,11 @@ const TukiChat: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Forzar reinicio completo
-    console.log('Reiniciando onboarding...');
+    // Forzar reinicio completo SIEMPRE
+    console.log('🔄 Reiniciando onboarding completamente...');
     localStorage.removeItem('tukiUserData');
     
-    // Resetear todo el estado
+    // Resetear TODO el estado
     setMessages([]);
     setCurrentQuestion(-1);
     setInputValue('');
@@ -82,16 +82,18 @@ const TukiChat: React.FC = () => {
     setIsTyping(false);
     setHasStarted(false);
     
-    // Iniciar el flujo después de un momento
+    // Iniciar el flujo inmediatamente con un timestamp único
+    const timestamp = Date.now();
     setTimeout(() => {
+      console.log('🚀 Iniciando onboarding con timestamp:', timestamp);
       startOnboarding();
-    }, 500);
-  }, []);
+    }, 800);
+  }, []); // Sin dependencias para que se ejecute solo al montar
 
   const startOnboarding = () => {
-    console.log('Iniciando onboarding...');
+    console.log('✨ Iniciando conversación con Tuki...');
     const welcomeMessage: Message = {
-      id: 'welcome-' + Date.now(),
+      id: 'welcome-' + Date.now() + '-' + Math.random(),
       text: '¡Hola! 👋 Soy Tuki, tu asistente de marketing digital. Estoy aquí para ayudarte a crear campañas increíbles para tu negocio. Te voy a hacer algunas preguntas rápidas para conocerte mejor. ¿Estás listo?',
       isBot: true,
       timestamp: new Date()
@@ -100,7 +102,7 @@ const TukiChat: React.FC = () => {
     setMessages([welcomeMessage]);
     setHasStarted(true);
     
-    // Mostrar la primera pregunta después de un momento
+    // Mostrar la primera pregunta
     setTimeout(() => {
       setCurrentQuestion(0);
       showNextQuestion(0);
@@ -121,7 +123,7 @@ const TukiChat: React.FC = () => {
       if (questionIndex < questions.length) {
         const question = questions[questionIndex];
         const newMessage: Message = {
-          id: `question-${questionIndex}-${Date.now()}`,
+          id: `question-${questionIndex}-${Date.now()}-${Math.random()}`,
           text: question.text,
           isBot: true,
           timestamp: new Date()
@@ -136,7 +138,7 @@ const TukiChat: React.FC = () => {
     if (!inputValue.trim()) return;
 
     const userMessage: Message = {
-      id: Date.now().toString(),
+      id: Date.now().toString() + '-' + Math.random(),
       text: inputValue,
       isBot: false,
       timestamp: new Date()
@@ -170,7 +172,7 @@ const TukiChat: React.FC = () => {
 
   const handleOptionSelect = (option: string) => {
     const userMessage: Message = {
-      id: Date.now().toString(),
+      id: Date.now().toString() + '-' + Math.random(),
       text: option,
       isBot: false,
       timestamp: new Date()
@@ -214,7 +216,7 @@ const TukiChat: React.FC = () => {
       : 'No tengo redes activas aún';
     
     const userMessage: Message = {
-      id: Date.now().toString(),
+      id: Date.now().toString() + '-' + Math.random(),
       text: selectedOptions,
       isBot: false,
       timestamp: new Date()
@@ -230,7 +232,7 @@ const TukiChat: React.FC = () => {
     setIsTyping(true);
     setTimeout(() => {
       const completionMessage: Message = {
-        id: Date.now().toString(),
+        id: Date.now().toString() + '-' + Math.random(),
         text: '¡Perfecto! Ya tengo toda la información que necesito. Ahora voy a preparar un resumen de tu briefing 📋',
         isBot: true,
         timestamp: new Date()
@@ -248,6 +250,7 @@ const TukiChat: React.FC = () => {
   };
 
   const handleEditResponses = () => {
+    console.log('🔄 Reiniciando desde editar respuestas...');
     // Reiniciar completamente
     setIsComplete(false);
     setCurrentQuestion(-1);
@@ -259,6 +262,8 @@ const TukiChat: React.FC = () => {
       redesSociales: []
     });
     setHasStarted(false);
+    setIsTyping(false);
+    setInputValue('');
     
     // Reiniciar el flujo
     setTimeout(() => {
