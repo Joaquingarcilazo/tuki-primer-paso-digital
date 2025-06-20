@@ -78,22 +78,22 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({ userData, onBack 
     const templates = {
       'Aumentar visibilidad de mi marca': [
         `Descubre ${producto.toLowerCase()} que está revolucionando el mercado`,
-        `¿Conoces ${producto.toLowerCase()}? Te va a sorprender`,
+        `¿Conocés ${producto.toLowerCase()}? Te va a sorprender`,
         `La solución que buscabas: ${producto.toLowerCase()}`,
         `${producto} - La innovación que necesitabas`,
-        `Conoce ${producto.toLowerCase()} y transforma tu experiencia`
+        `Conocé ${producto.toLowerCase()} y transformá tu experiencia`
       ],
       'Generar más leads/consultas': [
-        `Consulta gratis sobre ${producto.toLowerCase()}`,
-        `Obtén más información sobre ${producto.toLowerCase()}`,
-        `¿Necesitas ${producto.toLowerCase()}? Contáctanos`,
+        `Consulta gratuita sobre ${producto.toLowerCase()}`,
+        `Obtené más información sobre ${producto.toLowerCase()}`,
+        `¿Necesitás ${producto.toLowerCase()}? Contactanos`,
         `${producto} - Consulta sin compromiso`,
-        `Solicita información sobre ${producto.toLowerCase()} ahora`
+        `Solicitá información sobre ${producto.toLowerCase()} ahora`
       ],
       'Aumentar ventas directas': [
-        `Compra ${producto.toLowerCase()} con descuento especial`,
+        `Comprá ${producto.toLowerCase()} con descuento especial`,
         `Oferta limitada: ${producto.toLowerCase()}`,
-        `Aprovecha esta oportunidad única con ${producto.toLowerCase()}`,
+        `Aprovechá esta oportunidad única con ${producto.toLowerCase()}`,
         `${producto} - Precio especial por tiempo limitado`,
         `No te pierdas esta oferta de ${producto.toLowerCase()}`
       ]
