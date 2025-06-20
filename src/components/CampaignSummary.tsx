@@ -28,9 +28,9 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
   userData, 
   onBack, 
   onEdit,
-  metaAdAccountId,
-  metaCampaignId,
-  metaAccessToken,
+  metaAdAccountId = "act_123456789", // Default values para testing
+  metaCampaignId = "camp_987654321",
+  metaAccessToken = "test_token_12345",
   ventaPromedio = 50 // Default $50 USD
 }) => {
   const [showImageGenerator, setShowImageGenerator] = useState(false);
@@ -96,10 +96,6 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
       // Ocultar preview después de mostrar el toast
       setTimeout(() => {
         setShowInstagramPreview(false);
-        // Mostrar automáticamente el dashboard después de 2 segundos
-        setTimeout(() => {
-          setShowDashboard(true);
-        }, 2000);
       }, 3000);
       
     } catch (error) {
@@ -137,8 +133,8 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
     );
   }
 
-  // Mostrar dashboard económico si está activado y tenemos los datos necesarios
-  if (showDashboard && metaAdAccountId && metaCampaignId && metaAccessToken) {
+  // Mostrar dashboard económico si está activado
+  if (showDashboard) {
     return (
       <div className="max-w-6xl mx-auto space-y-6">
         {/* Header del dashboard */}
@@ -380,8 +376,8 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
                 {isPublishing ? 'Publicando...' : 'Publicar en Instagram'}
               </Button>
 
-              {/* Nuevo botón para ver dashboard si ya se publicó */}
-              {publishedSuccessfully && metaAdAccountId && metaCampaignId && metaAccessToken && (
+              {/* Botón para ver dashboard - siempre visible después de publicar */}
+              {publishedSuccessfully && (
                 <Button
                   onClick={handleViewDashboard}
                   className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
