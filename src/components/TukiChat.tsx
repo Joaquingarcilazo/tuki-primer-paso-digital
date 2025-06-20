@@ -64,7 +64,7 @@ const TukiChat: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Limpiar datos guardados previamente
+    // Limpiar completamente el localStorage y reiniciar el estado
     localStorage.removeItem('tukiUserData');
     
     // Mensaje de bienvenida
@@ -248,7 +248,6 @@ const TukiChat: React.FC = () => {
   };
 
   const currentQuestionData = questions[currentQuestion];
-  const isMultipleQuestion = currentQuestionData?.type === 'multiple';
 
   if (isComplete) {
     return <OnboardingSummary userData={userData} onEdit={handleEditResponses} />;
@@ -280,9 +279,9 @@ const TukiChat: React.FC = () => {
         </div>
 
         {/* Input Area */}
-        {currentQuestion < questions.length && !isTyping && (
+        {currentQuestion < questions.length && !isTyping && currentQuestionData && (
           <div className="border-t bg-gray-50/50 p-4">
-            {currentQuestionData?.type === 'options' ? (
+            {currentQuestionData.type === 'options' ? (
               <div className="grid gap-2">
                 {currentQuestionData.options?.map((option) => (
                   <Button
@@ -295,7 +294,7 @@ const TukiChat: React.FC = () => {
                   </Button>
                 ))}
               </div>
-            ) : currentQuestionData?.type === 'multiple' ? (
+            ) : currentQuestionData.type === 'multiple' ? (
               <>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-4">
                   {currentQuestionData.options?.map((option) => (
@@ -318,11 +317,11 @@ const TukiChat: React.FC = () => {
               </>
             ) : (
               <div className="flex space-x-2">
-                {currentQuestionData?.type === 'textarea' ? (
+                {currentQuestionData.type === 'textarea' ? (
                   <Textarea
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
-                    placeholder={currentQuestionData?.placeholder}
+                    placeholder={currentQuestionData.placeholder}
                     className="flex-1 resize-none"
                     rows={3}
                     onKeyPress={(e) => {
@@ -336,7 +335,7 @@ const TukiChat: React.FC = () => {
                   <Input
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
-                    placeholder={currentQuestionData?.placeholder}
+                    placeholder={currentQuestionData.placeholder}
                     className="flex-1"
                     onKeyPress={(e) => {
                       if (e.key === 'Enter') {
