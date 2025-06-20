@@ -29,23 +29,15 @@ interface CampaignGeneratorProps {
 // Función utilitaria para corrección gramatical mínima
 function ensureSpanishGrammar(text: string): string {
   let t = text.trim();
-  // 1. Mayúscula inicial
   t = t.charAt(0).toUpperCase() + t.slice(1);
-
-  // 2. Preguntas y exclamaciones
   if (t.endsWith('?')) {
     if (!t.startsWith('¿')) t = '¿' + t;
   } else if (t.endsWith('!')) {
     if (!t.startsWith('¡')) t = '¡' + t;
+  } else if (!/[.!?]$/.test(t)) {
+    t += '.';
   }
-  // 3. Punto final en afirmaciones
-  else if (!/[.!?]$/.test(t)) {
-    t = t + '.';
-  }
-
-  // 4. Acento en 'tú'
   t = t.replace(/\btu\b/g, 'tú');
-
   return t;
 }
 
@@ -78,9 +70,13 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({ userData, onBack 
     
     // Generar título y texto con corrección automática
     const rawTitle = generateTitle(data.productoServicio, data.objetivoMarketing);
-    const rawText = generateAdText(data.productoServicio, data.clienteIdeal, data.objetivoMarketing);
-
     const titulo = ensureSpanishGrammar(rawTitle);
+    const rawText = generateAdText(
+      data.productoServicio,
+      data.clienteIdeal,
+      data.objetivoMarketing,
+      rawTitle
+    );
     const texto = ensureSpanishGrammar(rawText);
     
     // Generar público objetivo
@@ -128,34 +124,38 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({ userData, onBack 
     return options[Math.floor(Math.random() * options.length)];
   };
 
-  const generateAdText = (producto: string, cliente: string, objetivo: string): string => {
-    const templates = {
+  const generateAdText = (
+    producto: string,
+    cliente: string,
+    objetivo: string,
+    title: string
+  ): string => {
+    const templates: Record<string, string[]> = {
       'Aumentar visibilidad de mi marca': [
-        'Calidad premium que marca la diferencia. Visitá nuestro showroom y descubrí por qué somos líderes en el mercado',
-        'Tecnología de vanguardia al alcance de tus manos. Experimentá la excelencia que te merecés',
-        'Años de experiencia nos respaldan. Vení y comprobá la diferencia de trabajar con los mejores',
-        'Productos de primera línea que superan expectativas. Tu satisfacción es nuestra prioridad',
-        'Innovación y calidad se unen en cada producto. Descubrí lo que nos hace únicos en el sector'
+        `Con tu anuncio "${title}", hacé que más personas conozcan tu ${producto}. ¡Contactanos ahora!`,
+        `Que tu ${producto} destaque con "${title}". Potenciá tu imagen y llegá a nuevos clientes.`,
+        `Con "${title}", llevá tu ${producto} al próximo nivel. Visitá nuestro sitio y descubrí cómo.`,
+        `Tu ${producto} merece ser visto. Con "${title}", maximizá tu visibilidad sin esfuerzo.`,
+        `Mostrá lo mejor de tu ${producto} con "${title}" y sorprendé a tu público objetivo.`
       ],
       'Generar más leads/consultas': [
-        'Nuestros especialistas te brindan asesoramiento personalizado sin costo. Llamanos ahora y resolvé todas tus dudas',
-        'Recibí información detallada y un presupuesto a medida. Te acompañamos en cada paso del proceso',
-        'Contanos tus necesidades y te proponemos la mejor solución. Sin compromiso y con total transparencia',
-        'Te orientamos para que tomes la mejor decisión. Atención personalizada de lunes a viernes',
-        'Dejanos tus datos y te contactamos en el día. Respondemos todas tus preguntas de forma clara y directa'
+        `¿Querés más consultas sobre tu ${producto}? Con "${title}" recibí leads calificados hoy mismo.`,
+        `Con "${title}" atraé a clientes interesados en tu ${producto}. Dejanos tus datos ¡sin compromiso!`,
+        `Hacé que quien busque ${producto} te encuentre con "${title}". Invitá a tus clientes a contactarse.`,
+        `Tu ${producto} al alcance de quien lo necesita. "${title}" genera leads directos para vos.`,
+        `Dejanos tu consulta sobre ${producto} en "${title}" y te contactamos al instante.`
       ],
       'Aumentar ventas directas': [
-        'Aprovechá esta promoción exclusiva por tiempo limitado. Financiación disponible y envío sin cargo',
-        'Stock limitado, ¡no te lo pierdas! Garantía extendida y el mejor precio del mercado',
-        'Oferta válida hasta agotar stock. Comprá hoy y recibilo en 24 horas en CABA y GBA',
-        'Precio especial para los primeros 50 clientes. Incluye accesorios de regalo y garantía total',
-        'Última semana de descuentos. Pagá in cuotas sin interés y llevátelo ya'
+        `Vendé más ${producto} con "${title}". Oferta por tiempo limitado. ¡Aprovechá hoy mismo!`,
+        `Con "${title}", impulsá las ventas de tu ${producto}. Stock limitado: comprá ya.`,
+        `Tus ${producto} se venden mejor con "${title}". Pagá en cuotas y recibí envío sin cargo.`,
+        `Promoción especial para tu ${producto}. Con "${title}", conseguí un 20% de descuento hoy.`,
+        `Mejorá tus ventas de ${producto} ahora. Con "${title}", convertí clics en compras.`
       ]
     };
 
-    const options = templates[objetivo as keyof typeof templates] || templates['Aumentar visibilidad de mi marca'];
-    const raw = options[Math.floor(Math.random() * options.length)];
-    return raw; // Se corrige en createCampaignFromUserData
+    const list = templates[objetivo] || templates['Aumentar visibilidad de mi marca'];
+    return list[Math.floor(Math.random() * list.length)];
   };
 
   const generateTargetAudience = (cliente: string): string => {
