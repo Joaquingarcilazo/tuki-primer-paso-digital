@@ -22,45 +22,89 @@ function ensureSpanishGrammar(text: string): string {
   return t.replace(/\btu\b/g, 'tú');
 }
 
-/* ---------- 2. Título dirigido al consumidor ---------- */
-const generateTitle = (producto: string, cliente: string): string => {
-  return `¿Necesitás ${producto}? ¡Contactanos!`;
+/* ---------- 2. Extraer producto/servicio del texto del usuario ---------- */
+function extractProductService(userInput: string): string {
+  const input = userInput.toLowerCase().trim();
+  
+  // Patrones comunes para extraer el producto/servicio
+  const patterns = [
+    /tengo (?:una?|un) (.+)/,
+    /vendo (.+)/,
+    /ofrezco (.+)/,
+    /mi negocio es (?:de |una? |un )?(.+)/,
+    /soy (.+)/,
+    /trabajo (?:en |con |de )?(.+)/,
+    /me dedico a (.+)/,
+    /hago (.+)/
+  ];
+
+  for (const pattern of patterns) {
+    const match = input.match(pattern);
+    if (match && match[1]) {
+      let product = match[1].trim();
+      // Limpiar artículos innecesarios al final
+      product = product.replace(/\s+en\s+.+$/, '');
+      return product;
+    }
+  }
+
+  // Si no encuentra patrón, devolver el input limpio
+  return input.replace(/^(tengo|soy|vendo|ofrezco|mi negocio es|trabajo|me dedico a|hago)\s*/i, '');
+}
+
+/* ---------- 3. Título dirigido al consumidor ---------- */
+const generateTitle = (productoServicio: string, cliente: string): string => {
+  const producto = extractProductService(productoServicio);
+  
+  // Plantillas de títulos más naturales
+  const templates = [
+    `¿Necesitás ${producto}? ¡Contactanos!`,
+    `¿Buscás ${producto} de calidad? ¡Escribinos!`,
+    `${producto.charAt(0).toUpperCase() + producto.slice(1)} - ¡Consultá ahora!`,
+    `¿Querés el mejor ${producto}? ¡Hablamos!`,
+    `${producto.charAt(0).toUpperCase() + producto.slice(1)} de primera calidad`
+  ];
+  
+  const randomTitle = templates[Math.floor(Math.random() * templates.length)];
+  return ensureSpanishGrammar(randomTitle);
 };
 
-/* ---------- 3. Texto persuasivo coherente con el título ---------- */
+/* ---------- 4. Texto persuasivo coherente con el título ---------- */
 const generateAdText = (
   producto: string,
   cliente: string,
   objetivo: string,
   title: string
 ): string => {
+  // Extraer el producto limpio para usar en los templates
+  const productoLimpio = extractProductService(producto);
 
   const templates: Record<string, string[]> = {
     /* OBJETIVO: VISIBILIDAD */
     'Aumentar visibilidad de mi marca': [
-      `Descubrí nuestra línea de ${producto} y sentí la diferencia. ${title}`,
-      `Tu próximo ${producto} está acá. Elegí calidad y estilo hoy mismo.`,
-      `Innovación y diseño en ${producto}. Mirá lo que tenemos preparado para vos.`,
-      `Llevá tu juego al siguiente nivel con nuestros ${producto}. Conocenos ahora.`,
-      `Somos referentes en ${producto}. Visitanos y comprobalo vos mismo.`
+      `Descubrí nuestra línea de ${productoLimpio} y sentí la diferencia. ${title}`,
+      `Tu próximo ${productoLimpio} está acá. Elegí calidad y estilo hoy mismo.`,
+      `Innovación y diseño en ${productoLimpio}. Mirá lo que tenemos preparado para vos.`,
+      `Llevá tu experiencia al siguiente nivel con nuestros ${productoLimpio}. Conocenos ahora.`,
+      `Somos referentes en ${productoLimpio}. Visitanos y comprobalo vos mismo.`
     ],
 
     /* OBJETIVO: CONSULTAS / LEADS */
     'Generar más leads/consultas': [
-      `Escribinos y recibí asesoramiento gratis sobre nuestros ${producto}. ${title}`,
-      `Consultá hoy por nuestros ${producto} y obtené respuestas al instante.`,
-      `Contanos qué ${producto} buscás y te ayudamos a elegir la mejor opción.`,
+      `Escribinos y recibí asesoramiento gratis sobre nuestros ${productoLimpio}. ${title}`,
+      `Consultá hoy por nuestros ${productoLimpio} y obtené respuestas al instante.`,
+      `Contanos qué ${productoLimpio} buscás y te ayudamos a elegir la mejor opción.`,
       `Obtené información detallada y presupuestos sin compromiso. ¡Hablá con nosotros!`,
-      `Estamos online para resolver tus dudas sobre ${producto}. ¡Consultanos ahora!`
+      `Estamos online para resolver tus dudas sobre ${productoLimpio}. ¡Consultanos ahora!`
     ],
 
     /* OBJETIVO: VENTAS DIRECTAS */
     'Aumentar ventas directas': [
-      `Aprovechá esta promo en ${producto}. Stock limitado, ¡comprá ahora!`,
-      `Financiación en cuotas y envío sin cargo en todos los ${producto}.`,
-      `Comprá hoy tus ${producto} con descuento exclusivo y recibilos en 24 h.`,
-      `Solo por tiempo limitado: 20 % off en ${producto}. No te lo pierdas.`,
-      `Llevate tus nuevos ${producto} con garantía total y precio especial.`
+      `Aprovechá esta promo en ${productoLimpio}. Stock limitado, ¡comprá ahora!`,
+      `Financiación en cuotas y envío sin cargo en todos los ${productoLimpio}.`,
+      `Comprá hoy tu ${productoLimpio} con descuento exclusivo y recibilo en 24 h.`,
+      `Solo por tiempo limitado: 20% off en ${productoLimpio}. No te lo pierdas.`,
+      `Llevate tu nuevo ${productoLimpio} con garantía total y precio especial.`
     ]
   };
 
