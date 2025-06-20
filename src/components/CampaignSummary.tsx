@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Edit3, Rocket, Target, DollarSign, Calendar, Radio, Image } from 'lucide-react';
+import { ArrowLeft, Edit3, Rocket, Target, DollarSign, Calendar, Radio, Image, BarChart3 } from 'lucide-react';
 import { Campaign, UserData } from '../types/campaign';
 import { getProductImage } from '@/services/ai';
 import { isImageRelevant } from '@/helpers/relevance';
 import CampaignImageGenerator from './CampaignImageGenerator';
+import CampaignDashboard from './CampaignDashboard';
 import { toast } from '@/components/ui/use-toast';
 import { publishToInstagram } from '@/services/instagramPublisher';
 import InstagramPreview from './InstagramPreview';
@@ -15,14 +16,30 @@ interface CampaignSummaryProps {
   userData: UserData;
   onBack: () => void;
   onEdit: () => void;
+  // Nuevas props para el dashboard económico
+  metaAdAccountId?: string;
+  metaCampaignId?: string;
+  metaAccessToken?: string;
+  ventaPromedio?: number;
 }
 
-const CampaignSummary: React.FC<CampaignSummaryProps> = ({ campaign, userData, onBack, onEdit }) => {
+const CampaignSummary: React.FC<CampaignSummaryProps> = ({ 
+  campaign, 
+  userData, 
+  onBack, 
+  onEdit,
+  metaAdAccountId,
+  metaCampaignId,
+  metaAccessToken,
+  ventaPromedio = 50 // Default $50 USD
+}) => {
   const [showImageGenerator, setShowImageGenerator] = useState(false);
   const [campaignWithImages, setCampaignWithImages] = useState<Campaign>(campaign);
   const [imgUrl, setImgUrl] = useState<string>('');
   const [showInstagramPreview, setShowInstagramPreview] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
+  const [showDashboard, setShowDashboard] = useState(false);
+  const [publishedSuccessfully, setPublishedSuccessfully] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -67,6 +84,9 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({ campaign, userData, o
       // Simular publicación en Instagram
       const instagramPost = await publishToInstagram(campaignWithImages, userData, imageToUse);
       
+      // Marcar como publicado exitosamente
+      setPublishedSuccessfully(true);
+      
       // Mostrar resultado exitoso
       toast({
         title: "🎉 ¡Campaña publicada!",
@@ -76,6 +96,10 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({ campaign, userData, o
       // Ocultar preview después de mostrar el toast
       setTimeout(() => {
         setShowInstagramPreview(false);
+        // Mostrar automáticamente el dashboard después de 2 segundos
+        setTimeout(() => {
+          setShowDashboard(true);
+        }, 2000);
       }, 3000);
       
     } catch (error) {
@@ -94,6 +118,14 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({ campaign, userData, o
     setShowImageGenerator(false);
   };
 
+  const handleViewDashboard = () => {
+    setShowDashboard(true);
+  };
+
+  const handleBackFromDashboard = () => {
+    setShowDashboard(false);
+  };
+
   if (showImageGenerator) {
     return (
       <CampaignImageGenerator
@@ -102,6 +134,62 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({ campaign, userData, o
         onBack={handleBackFromImageGenerator}
         onContinue={handleImagesGenerated}
       />
+    );
+  }
+
+  // Mostrar dashboard económico si está activado y tenemos los datos necesarios
+  if (showDashboard && metaAdAccountId && metaCampaignId && metaAccessToken) {
+    return (
+      <div className="max-w-6xl mx-auto space-y-6">
+        {/* Header del dashboard */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <Button
+              onClick={handleBackFromDashboard}
+              variant="outline"
+              size="icon"
+              className="rounded-full"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+            <div>
+              <h2 className="text-3xl font-bold text-gray-800">
+                📊 Rendimiento Económico
+              </h2>
+              <p className="text-gray-600">
+                Así está funcionando tu campaña de <strong>{userData.productoServicio}</strong>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Dashboard económico */}
+        <CampaignDashboard
+          adAccountId={metaAdAccountId}
+          campaignId={metaCampaignId}
+          accessToken={metaAccessToken}
+          ventaPromedio={ventaPromedio}
+        />
+
+        {/* Botones de acción */}
+        <div className="flex justify-center space-x-4">
+          <Button
+            onClick={onEdit}
+            variant="outline"
+            className="px-6 py-2"
+          >
+            <Edit3 className="w-4 h-4 mr-2" />
+            Optimizar campaña
+          </Button>
+          
+          <Button
+            onClick={onBack}
+            className="px-6 py-2"
+          >
+            Crear nueva campaña
+          </Button>
+        </div>
+      </div>
     );
   }
 
@@ -291,6 +379,17 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({ campaign, userData, o
                 <Rocket className="w-5 h-5 mr-2" />
                 {isPublishing ? 'Publicando...' : 'Publicar en Instagram'}
               </Button>
+
+              {/* Nuevo botón para ver dashboard si ya se publicó */}
+              {publishedSuccessfully && metaAdAccountId && metaCampaignId && metaAccessToken && (
+                <Button
+                  onClick={handleViewDashboard}
+                  className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+                >
+                  <BarChart3 className="w-5 h-5 mr-2" />
+                  Ver rendimiento económico
+                </Button>
+              )}
               
               <Button
                 onClick={onEdit}
@@ -308,6 +407,11 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({ campaign, userData, o
       {/* Info adicional */}
       <div className="text-center text-sm text-gray-500">
         <p>🤖 Esta campaña fue generada automáticamente por Tuki basándose en tu briefing</p>
+        {publishedSuccessfully && (
+          <p className="mt-2 text-green-600 font-medium">
+            ✅ ¡Campaña publicada! Podés ver su rendimiento económico haciendo click en "Ver rendimiento económico"
+          </p>
+        )}
       </div>
     </div>
   );
