@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -23,6 +24,29 @@ interface Campaign {
 interface CampaignGeneratorProps {
   userData: UserData;
   onBack: () => void;
+}
+
+// Función utilitaria para corrección gramatical mínima
+function ensureSpanishGrammar(text: string): string {
+  let t = text.trim();
+  // 1. Mayúscula inicial
+  t = t.charAt(0).toUpperCase() + t.slice(1);
+
+  // 2. Preguntas y exclamaciones
+  if (t.endsWith('?')) {
+    if (!t.startsWith('¿')) t = '¿' + t;
+  } else if (t.endsWith('!')) {
+    if (!t.startsWith('¡')) t = '¡' + t;
+  }
+  // 3. Punto final en afirmaciones
+  else if (!/[.!?]$/.test(t)) {
+    t = t + '.';
+  }
+
+  // 4. Acento en 'tú'
+  t = t.replace(/\btu\b/g, 'tú');
+
+  return t;
 }
 
 const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({ userData, onBack }) => {
@@ -52,11 +76,12 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({ userData, onBack 
     
     const canal = hasInstagramFacebook ? 'Meta Ads (Instagram/Facebook)' : 'Google Ads';
     
-    // Generar título basado en el producto/servicio
-    const titulo = generateTitle(data.productoServicio, data.objetivoMarketing);
-    
-    // Generar texto del anuncio que complemente el título
-    const texto = generateAdText(data.productoServicio, data.clienteIdeal, data.objetivoMarketing);
+    // Generar título y texto con corrección automática
+    const rawTitle = generateTitle(data.productoServicio, data.objetivoMarketing);
+    const rawText = generateAdText(data.productoServicio, data.clienteIdeal, data.objetivoMarketing);
+
+    const titulo = ensureSpanishGrammar(rawTitle);
+    const texto = ensureSpanishGrammar(rawText);
     
     // Generar público objetivo
     const publicoObjetivo = generateTargetAudience(data.clienteIdeal);
@@ -106,30 +131,31 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({ userData, onBack 
   const generateAdText = (producto: string, cliente: string, objetivo: string): string => {
     const templates = {
       'Aumentar visibilidad de mi marca': [
-        `Calidad premium que marca la diferencia. Visitá nuestro showroom y descubrí por qué somos líderes en el mercado.`,
-        `Tecnología de vanguardia al alcance de tus manos. Experimentá la excelencia que te merecés.`,
-        `Años de experiencia nos respaldan. Vení y comprobá la diferencia de trabajar con los mejores.`,
-        `Productos de primera línea que superan expectativas. Tu satisfacción es nuestra prioridad.`,
-        `Innovación y calidad se unen en cada producto. Descubrí lo que nos hace únicos en el sector.`
+        'Calidad premium que marca la diferencia. Visitá nuestro showroom y descubrí por qué somos líderes en el mercado',
+        'Tecnología de vanguardia al alcance de tus manos. Experimentá la excelencia que te merecés',
+        'Años de experiencia nos respaldan. Vení y comprobá la diferencia de trabajar con los mejores',
+        'Productos de primera línea que superan expectativas. Tu satisfacción es nuestra prioridad',
+        'Innovación y calidad se unen en cada producto. Descubrí lo que nos hace únicos en el sector'
       ],
       'Generar más leads/consultas': [
-        `Nuestros especialistas te brindan asesoramiento personalizado sin costo. Llamanos ahora y resolvé todas tus dudas.`,
-        `Recibí información detallada y un presupuesto a medida. Te acompañamos en cada paso del proceso.`,
-        `Contanos tus necesidades y te proponemos la mejor solución. Sin compromiso y con total transparencia.`,
-        `Te orientamos para que tomes la mejor decisión. Atención personalizada de lunes a viernes.`,
-        `Dejanos tus datos y te contactamos en el día. Respondemos todas tus preguntas de forma clara y directa.`
+        'Nuestros especialistas te brindan asesoramiento personalizado sin costo. Llamanos ahora y resolvé todas tus dudas',
+        'Recibí información detallada y un presupuesto a medida. Te acompañamos en cada paso del proceso',
+        'Contanos tus necesidades y te proponemos la mejor solución. Sin compromiso y con total transparencia',
+        'Te orientamos para que tomes la mejor decisión. Atención personalizada de lunes a viernes',
+        'Dejanos tus datos y te contactamos en el día. Respondemos todas tus preguntas de forma clara y directa'
       ],
       'Aumentar ventas directas': [
-        `Aprovechá esta promoción exclusiva por tiempo limitado. Financiación disponible y envío sin cargo.`,
-        `Stock limitado, ¡no te lo pierdas! Garantía extendida y el mejor precio del mercado.`,
-        `Oferta válida hasta agotar stock. Comprá hoy y recibilo en 24 horas en CABA y GBA.`,
-        `Precio especial para los primeros 50 clientes. Incluye accesorios de regalo y garantía total.`,
-        `Última semana de descuentos. Pagá en cuotas sin interés y llevátelo ya.`
+        'Aprovechá esta promoción exclusiva por tiempo limitado. Financiación disponible y envío sin cargo',
+        'Stock limitado, ¡no te lo pierdas! Garantía extendida y el mejor precio del mercado',
+        'Oferta válida hasta agotar stock. Comprá hoy y recibilo en 24 horas en CABA y GBA',
+        'Precio especial para los primeros 50 clientes. Incluye accesorios de regalo y garantía total',
+        'Última semana de descuentos. Pagá in cuotas sin interés y llevátelo ya'
       ]
     };
 
     const options = templates[objetivo as keyof typeof templates] || templates['Aumentar visibilidad de mi marca'];
-    return options[Math.floor(Math.random() * options.length)];
+    const raw = options[Math.floor(Math.random() * options.length)];
+    return raw; // Se corrige en createCampaignFromUserData
   };
 
   const generateTargetAudience = (cliente: string): string => {
