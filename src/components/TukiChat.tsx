@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -51,7 +50,7 @@ const questions = [
 
 const TukiChat: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [currentQuestion, setCurrentQuestion] = useState(-1); // Empezar en -1 para forzar reinicio
   const [inputValue, setInputValue] = useState('');
   const [userData, setUserData] = useState<UserData>({
     productoServicio: '',
@@ -61,26 +60,52 @@ const TukiChat: React.FC = () => {
   });
   const [isComplete, setIsComplete] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Limpiar completamente el localStorage y reiniciar el estado
+    // Forzar reinicio completo
+    console.log('Reiniciando onboarding...');
     localStorage.removeItem('tukiUserData');
     
-    // Mensaje de bienvenida
+    // Resetear todo el estado
+    setMessages([]);
+    setCurrentQuestion(-1);
+    setInputValue('');
+    setUserData({
+      productoServicio: '',
+      clienteIdeal: '',
+      objetivoMarketing: '',
+      redesSociales: []
+    });
+    setIsComplete(false);
+    setIsTyping(false);
+    setHasStarted(false);
+    
+    // Iniciar el flujo después de un momento
+    setTimeout(() => {
+      startOnboarding();
+    }, 500);
+  }, []);
+
+  const startOnboarding = () => {
+    console.log('Iniciando onboarding...');
     const welcomeMessage: Message = {
-      id: '1',
+      id: 'welcome-' + Date.now(),
       text: '¡Hola! 👋 Soy Tuki, tu asistente de marketing digital. Estoy aquí para ayudarte a crear campañas increíbles para tu negocio. Te voy a hacer algunas preguntas rápidas para conocerte mejor. ¿Estás listo?',
       isBot: true,
       timestamp: new Date()
     };
-    setMessages([welcomeMessage]);
     
-    // Después de un momento, mostrar la primera pregunta
+    setMessages([welcomeMessage]);
+    setHasStarted(true);
+    
+    // Mostrar la primera pregunta después de un momento
     setTimeout(() => {
-      showNextQuestion();
+      setCurrentQuestion(0);
+      showNextQuestion(0);
     }, 2000);
-  }, []);
+  };
 
   useEffect(() => {
     scrollToBottom();
@@ -90,13 +115,13 @@ const TukiChat: React.FC = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const showNextQuestion = () => {
+  const showNextQuestion = (questionIndex: number) => {
     setIsTyping(true);
     setTimeout(() => {
-      if (currentQuestion < questions.length) {
-        const question = questions[currentQuestion];
+      if (questionIndex < questions.length) {
+        const question = questions[questionIndex];
         const newMessage: Message = {
-          id: Date.now().toString(),
+          id: `question-${questionIndex}-${Date.now()}`,
           text: question.text,
           isBot: true,
           timestamp: new Date()
@@ -136,7 +161,7 @@ const TukiChat: React.FC = () => {
     // Mostrar siguiente pregunta o completar
     setTimeout(() => {
       if (nextQuestion < questions.length) {
-        showNextQuestion();
+        showNextQuestion(nextQuestion);
       } else {
         completeOnboarding(updatedUserData);
       }
@@ -165,7 +190,7 @@ const TukiChat: React.FC = () => {
 
     setTimeout(() => {
       if (nextQuestion < questions.length) {
-        showNextQuestion();
+        showNextQuestion(nextQuestion);
       } else {
         completeOnboarding(updatedUserData);
       }
@@ -223,8 +248,9 @@ const TukiChat: React.FC = () => {
   };
 
   const handleEditResponses = () => {
+    // Reiniciar completamente
     setIsComplete(false);
-    setCurrentQuestion(0);
+    setCurrentQuestion(-1);
     setMessages([]);
     setUserData({
       productoServicio: '',
@@ -232,22 +258,15 @@ const TukiChat: React.FC = () => {
       objetivoMarketing: '',
       redesSociales: []
     });
+    setHasStarted(false);
     
     // Reiniciar el flujo
-    const welcomeMessage: Message = {
-      id: '1',
-      text: '¡Perfecto! Vamos a revisar tus respuestas. Te haré las preguntas nuevamente 😊',
-      isBot: true,
-      timestamp: new Date()
-    };
-    setMessages([welcomeMessage]);
-    
     setTimeout(() => {
-      showNextQuestion();
-    }, 2000);
+      startOnboarding();
+    }, 500);
   };
 
-  const currentQuestionData = questions[currentQuestion];
+  const currentQuestionData = currentQuestion >= 0 ? questions[currentQuestion] : null;
 
   if (isComplete) {
     return <OnboardingSummary userData={userData} onEdit={handleEditResponses} />;
@@ -279,7 +298,7 @@ const TukiChat: React.FC = () => {
         </div>
 
         {/* Input Area */}
-        {currentQuestion < questions.length && !isTyping && currentQuestionData && (
+        {currentQuestion >= 0 && currentQuestion < questions.length && !isTyping && currentQuestionData && (
           <div className="border-t bg-gray-50/50 p-4">
             {currentQuestionData.type === 'options' ? (
               <div className="grid gap-2">
