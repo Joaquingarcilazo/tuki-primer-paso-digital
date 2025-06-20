@@ -17,6 +17,14 @@ const OnboardingAudience: React.FC<{ onNext: (a: AudienceData) => void }> = ({ o
     setAudience(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleContinue = () => {
+    if (!audience.ubicacion?.trim() && !audience.intereses?.trim()) {
+      alert('Indicá al menos una ubicación o intereses para tu público objetivo.');
+      return;
+    }
+    onNext(audience);
+  };
+
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-semibold">Definí tu público objetivo</h2>
@@ -49,7 +57,7 @@ const OnboardingAudience: React.FC<{ onNext: (a: AudienceData) => void }> = ({ o
         onChange={e => handleChange('intereses', e.target.value)}
       />
 
-      <Button onClick={() => onNext(audience)} className="w-full">
+      <Button onClick={handleContinue} className="w-full">
         Continuar
       </Button>
     </div>
