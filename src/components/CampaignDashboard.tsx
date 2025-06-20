@@ -30,51 +30,47 @@ const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
 }) => {
   const [loading, setLoading] = useState(true);
   const [insights, setInsights] = useState<MetaInsights | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchInsights = async () => {
+    const simulateMetaInsights = async () => {
       try {
         setLoading(true);
         
-        const url = `https://graph.facebook.com/v19.0/${adAccountId}/insights`;
-        const params = new URLSearchParams({
-          access_token: accessToken,
-          filtering: JSON.stringify([{
-            field: 'campaign.id',
-            operator: 'IN',
-            value: [campaignId]
-          }]),
-          fields: 'spend,impressions,clicks,actions',
-          date_preset: 'lifetime'
-        });
-
-        const response = await fetch(`${url}?${params}`);
+        // Simular delay de API real
+        await new Promise(resolve => setTimeout(resolve, 1500));
         
-        if (!response.ok) {
-          throw new Error(`Error ${response.status}: ${response.statusText}`);
-        }
-
-        const data = await response.json();
+        // Generar datos simulados realistas para una campaña
+        const simulatedInsights: MetaInsights = {
+          spend: (Math.random() * 200 + 50).toFixed(2), // Entre $50-$250
+          impressions: Math.floor(Math.random() * 8000 + 2000).toString(), // Entre 2k-10k
+          clicks: Math.floor(Math.random() * 400 + 100).toString(), // Entre 100-500
+          actions: [
+            {
+              action_type: 'purchase',
+              value: Math.floor(Math.random() * 8 + 2).toString() // Entre 2-10 conversiones
+            }
+          ]
+        };
         
-        if (data.data && data.data.length > 0) {
-          setInsights(data.data[0]);
-        } else {
-          setInsights({
-            spend: '0',
-            impressions: '0',
-            clicks: '0'
-          });
-        }
+        setInsights(simulatedInsights);
+        
+        console.log('📊 Datos simulados del dashboard:', simulatedInsights);
+        
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error desconocido');
-        console.error('Error fetching insights:', err);
+        console.error('Error simulando insights:', err);
+        // Datos de fallback
+        setInsights({
+          spend: '85.50',
+          impressions: '4500',
+          clicks: '280',
+          actions: [{ action_type: 'purchase', value: '5' }]
+        });
       } finally {
         setLoading(false);
       }
     };
 
-    fetchInsights();
+    simulateMetaInsights();
   }, [adAccountId, campaignId, accessToken]);
 
   if (loading) {
@@ -93,19 +89,6 @@ const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
           </Card>
         ))}
       </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <Card className="col-span-full">
-        <CardContent className="pt-6">
-          <div className="text-center text-red-600">
-            <p className="font-medium">Error al cargar datos</p>
-            <p className="text-sm text-gray-500 mt-1">{error}</p>
-          </div>
-        </CardContent>
-      </Card>
     );
   }
 
@@ -302,6 +285,11 @@ const CampaignDashboard: React.FC<CampaignDashboardProps> = ({
                 Por cada $1 invertido, estás obteniendo ${((ventasEstimadas/gastoTotal) || 0).toFixed(2)} en ventas.
               </p>
             )}
+            
+            <p className="text-blue-700 bg-blue-50 p-2 rounded text-xs mt-2">
+              🤖 <strong>Datos simulados:</strong> Este dashboard muestra datos realistas simulados 
+              para demostración. En producción se conectaría con Meta Marketing API.
+            </p>
           </div>
         </CardContent>
       </Card>
