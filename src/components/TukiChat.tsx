@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -60,6 +59,9 @@ const TukiChat: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Limpiar datos guardados previamente
+    localStorage.removeItem('tukiUserData');
+    
     // Mensaje de bienvenida
     const welcomeMessage: Message = {
       id: '1',
