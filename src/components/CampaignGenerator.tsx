@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,6 +8,7 @@ import { UserData, Campaign, AudienceData } from '../types/campaign';
 
 interface CampaignGeneratorProps {
   userData: UserData;
+  audienceData?: AudienceData;
   onBack: () => void;
 }
 
@@ -112,7 +114,7 @@ const formatAudienceData = (audienceData: AudienceData): string => {
   return parts.join(', ');
 };
 
-const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({ userData, onBack }) => {
+const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({ userData, audienceData, onBack }) => {
   const [isGenerating, setIsGenerating] = useState(true);
   const [campaign, setCampaign] = useState<Campaign | null>(null);
 
@@ -125,13 +127,13 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({ userData, onBack 
     
     // Simular generación de campaña con datos del briefing
     setTimeout(() => {
-      const generatedCampaign = createCampaignFromUserData(userData);
+      const generatedCampaign = createCampaignFromUserData(userData, audienceData);
       setCampaign(generatedCampaign);
       setIsGenerating(false);
     }, 3000);
   };
 
-  const createCampaignFromUserData = (data: UserData): Campaign => {
+  const createCampaignFromUserData = (data: UserData, audience?: AudienceData): Campaign => {
     // Lógica para generar campaña basada en los datos del usuario
     const hasInstagramFacebook = data.redesSociales.some(red => 
       red.includes('Instagram') || red.includes('Facebook')
@@ -150,9 +152,9 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({ userData, onBack 
       titulo
     );
     
-    // Generar público objetivo usando la nueva estructura
-    const audienceData = generateAudienceData(data.clienteIdeal);
-    const publicoObjetivo = formatAudienceData(audienceData);
+    // Usar audiencia proporcionada o generar una nueva
+    const finalAudience = audience || generateAudienceData(data.clienteIdeal);
+    const publicoObjetivo = formatAudienceData(finalAudience);
     
     // Presupuesto sugerido basado en el objetivo
     const presupuesto = generateBudget(data.objetivoMarketing);
