@@ -90,24 +90,31 @@ const TukiChat: React.FC = () => {
     }, 800);
   }, []); // Sin dependencias para que se ejecute solo al montar
 
-  const startOnboarding = () => {
-    console.log('✨ Iniciando conversación con Tuki...');
-    const welcomeMessage: Message = {
-      id: 'welcome-' + Date.now() + '-' + Math.random(),
-      text: '¡Hola! 👋 Soy Tuki, tu asistente personal de marketing digital para emprendedores argentinos. Estoy acá para ayudarte a crear campañas impactantes y rápidas para tu negocio. ¿Arrancamos?',
-      isBot: true,
-      timestamp: new Date()
-    };
-    
-    setMessages([welcomeMessage]);
-    setHasStarted(true);
-    
-    // Mostrar la primera pregunta
+const startOnboarding = () => {
+  console.log('✨ Iniciando conversación con Tuki...');
+  const welcomeMessage: Message = {
+    id: 'welcome-' + Date.now() + '-' + Math.random(),
+    text: '¡Hola! 👋 Soy Tuki, tu asistente personal de marketing digital para emprendedores argentinos. Estoy acá para ayudarte a crear campañas impactantes y rápidas para tu negocio. ¿Arrancamos?',
+    isBot: true,
+    timestamp: new Date()
+  };
+
+  setMessages([welcomeMessage]);
+  setHasStarted(true);
+
+  // Simular que Tuki está pensando 1.5s antes de la primera pregunta
+  setTimeout(() => {
+    setIsTyping(true);
+
     setTimeout(() => {
+      setIsTyping(false);
       setCurrentQuestion(0);
       showNextQuestion(0);
-    }, 2000);
-  };
+    }, 1500); // Duración del "pensando..."
+    
+  }, 2000); // Delay entre bienvenida y "pensando..."
+};
+
 
   useEffect(() => {
     scrollToBottom();
