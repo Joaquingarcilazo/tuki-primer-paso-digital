@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Send, Edit3, Sparkles } from 'lucide-react';
 import ChatMessage from './ChatMessage';
 import OnboardingSummary from './OnboardingSummary';
+import { validateResponse } from '../utils/responseValidator';
 
 interface Message {
   id: string;
@@ -62,6 +63,7 @@ const TukiChat: React.FC = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   useEffect(() => {
     // Forzar reinicio completo SIEMPRE
@@ -138,13 +140,50 @@ const startOnboarding = () => {
         };
         setMessages(prev => [...prev, newMessage]);
         setIsTyping(false);
+        setValidationError(null); // Limpiar errores de validación
       }
     }, 1500);
+  };
+
+  const showValidationError = (errorMessage: string) => {
+    setIsTyping(true);
+    setTimeout(() => {
+      const errorMsg: Message = {
+        id: `validation-error-${Date.now()}-${Math.random()}`,
+        text: errorMessage,
+        isBot: true,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorMsg]);
+      setIsTyping(false);
+      setValidationError(errorMessage);
+    }, 1000);
   };
 
   const handleSendMessage = () => {
     if (!inputValue.trim()) return;
 
+    // Validar la respuesta antes de procesarla
+    const currentQuestionId = questions[currentQuestion].id;
+    const validation = validateResponse(currentQuestionId, inputValue);
+
+    if (!validation.isValid && validation.errorMessage) {
+      // Agregar mensaje del usuario primero
+      const userMessage: Message = {
+        id: Date.now().toString() + '-' + Math.random(),
+        text: inputValue,
+        isBot: false,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, userMessage]);
+      setInputValue('');
+      
+      // Mostrar error de validación
+      showValidationError(validation.errorMessage);
+      return;
+    }
+
+    // Si la validación es exitosa, proceder normalmente
     const userMessage: Message = {
       id: Date.now().toString() + '-' + Math.random(),
       text: inputValue,
@@ -163,6 +202,7 @@ const startOnboarding = () => {
     setUserData(updatedUserData);
 
     setInputValue('');
+    setValidationError(null);
     
     // Avanzar a la siguiente pregunta
     const nextQuestion = currentQuestion + 1;
@@ -295,21 +335,20 @@ const startOnboarding = () => {
           ))}
           
           {isTyping && (
-  <div className="flex items-center gap-3 px-4 py-2 text-gray-600">
-    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-      <span className="text-sm">🤖</span>
-    </div>
-    <div className="flex items-center gap-2">
-      <div className="flex space-x-1">
-        <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"></div>
-        <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-        <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-      </div>
-      <span className="text-sm italic text-blue-600">pensando...</span>
-    </div>
-  </div>
-)}
-
+            <div className="flex items-center gap-3 px-4 py-2 text-gray-600">
+              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                <span className="text-sm">🤖</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="flex space-x-1">
+                  <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"></div>
+                  <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                  <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                </div>
+                <span className="text-sm italic text-blue-600">pensando...</span>
+              </div>
+            </div>
+          )}
           
           <div ref={messagesEndRef} />
         </div>
@@ -317,6 +356,12 @@ const startOnboarding = () => {
         {/* Input Area */}
         {currentQuestion >= 0 && currentQuestion < questions.length && !isTyping && currentQuestionData && (
           <div className="border-t bg-gray-50/50 p-4">
+            {validationError && (
+              <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-md">
+                <p className="text-sm text-red-600">💡 Tip: {validationError}</p>
+              </div>
+            )}
+            
             {currentQuestionData.type === 'options' ? (
               <div className="grid gap-2">
                 {currentQuestionData.options?.map((option) => (
@@ -358,7 +403,7 @@ const startOnboarding = () => {
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     placeholder={currentQuestionData.placeholder}
-                    className="flex-1 resize-none"
+                    className={`flex-1 resize-none ${validationError ? 'border-red-300 focus:border-red-500' : ''}`}
                     rows={3}
                     onKeyPress={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
@@ -372,7 +417,7 @@ const startOnboarding = () => {
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     placeholder={currentQuestionData.placeholder}
-                    className="flex-1"
+                    className={`flex-1 ${validationError ? 'border-red-300 focus:border-red-500' : ''}`}
                     onKeyPress={(e) => {
                       if (e.key === 'Enter') {
                         handleSendMessage();

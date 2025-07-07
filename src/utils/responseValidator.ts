@@ -1,0 +1,113 @@
+
+export interface ValidationResult {
+  isValid: boolean;
+  errorMessage?: string;
+}
+
+// Lista de palabras que no son productos/servicios válidos
+const invalidProducts = [
+  'fuego', 'agua', 'aire', 'tierra', 'sol', 'luna', 'cielo', 'mar', 'océano',
+  'amor', 'felicidad', 'tristeza', 'miedo', 'alegría', 'dolor', 'paz', 'guerra',
+  'vida', 'muerte', 'tiempo', 'espacio', 'universo', 'dios', 'diablo',
+  'nada', 'todo', 'algo', 'nada más', 'cualquier cosa'
+];
+
+// Patrones que indican texto sin sentido
+const gibberishPatterns = [
+  /^[a-z]{1,3}(\s[a-z]{1,3}){3,}$/i, // Palabras muy cortas repetidas
+  /^[a-z]*[0-9]+[a-z]*$/i, // Mezcla aleatoria de letras y números
+  /([a-z])\1{4,}/i, // Letras repetidas más de 4 veces
+  /^[bcdfghjklmnpqrstvwxyz]{5,}$/i, // Solo consonantes largas
+  /^[aeiou]{4,}$/i, // Solo vocales largas
+  /\b(asdf|qwer|zxcv|hjkl|fghj|dfgh|sdfg|xcvb|vbnm)\b/i // Patrones de teclado
+];
+
+export const validateProductoServicio = (input: string): ValidationResult => {
+  const trimmed = input.trim().toLowerCase();
+  
+  // Verificar longitud mínima
+  if (trimmed.length < 3) {
+    return {
+      isValid: false,
+      errorMessage: 'Por favor, describe tu producto o servicio con más detalle. Necesito al menos unas palabras para entender mejor tu negocio.'
+    };
+  }
+
+  // Verificar si es solo números o caracteres especiales
+  if (/^[0-9\W]+$/.test(trimmed)) {
+    return {
+      isValid: false,
+      errorMessage: 'No veo que hayas descrito un producto o servicio real. ¿Podrías contarme qué es lo que ofrecés específicamente?'
+    };
+  }
+
+  // Verificar palabras inválidas
+  const words = trimmed.split(/\s+/);
+  const hasInvalidWords = words.some(word => invalidProducts.includes(word));
+  
+  if (hasInvalidWords) {
+    return {
+      isValid: false,
+      errorMessage: 'Mmm, eso no parece ser un producto o servicio que puedas vender. ¿Podrías contarme qué es lo que realmente ofrecés en tu negocio?'
+    };
+  }
+
+  // Verificar patrones de texto sin sentido
+  const isGibberish = gibberishPatterns.some(pattern => pattern.test(trimmed));
+  
+  if (isGibberish) {
+    return {
+      isValid: false,
+      errorMessage: 'No logro entender bien lo que escribiste. ¿Podrías describir nuevamente qué producto o servicio ofrecés? Por ejemplo: "vendo ropa", "soy contador", "tengo una panadería".'
+    };
+  }
+
+  // Verificar que tenga al menos una palabra significativa
+  const meaningfulWords = words.filter(word => 
+    word.length > 2 && 
+    !/^(el|la|los|las|un|una|de|del|en|con|por|para|que|es|son|muy|más|pero|como|todo|esta|este)$/.test(word)
+  );
+
+  if (meaningfulWords.length === 0) {
+    return {
+      isValid: false,
+      errorMessage: 'Necesito que me cuentes específicamente qué vendes o qué servicio ofrecés. ¿Podrías ser más claro?'
+    };
+  }
+
+  return { isValid: true };
+};
+
+export const validateClienteIdeal = (input: string): ValidationResult => {
+  const trimmed = input.trim().toLowerCase();
+  
+  if (trimmed.length < 5) {
+    return {
+      isValid: false,
+      errorMessage: 'Necesito más información sobre tu cliente ideal. ¿Podrías describir con más detalle quién es esa persona que realmente necesita lo que ofrecés?'
+    };
+  }
+
+  // Verificar patrones de texto sin sentido
+  const isGibberish = gibberishPatterns.some(pattern => pattern.test(trimmed));
+  
+  if (isGibberish) {
+    return {
+      isValid: false,
+      errorMessage: 'No logro entender bien tu respuesta. ¿Podrías describir nuevamente quién es tu cliente ideal? Por ejemplo: "mujeres de 25-40 años", "pequeños empresarios", etc.'
+    };
+  }
+
+  return { isValid: true };
+};
+
+export const validateResponse = (questionId: string, input: string): ValidationResult => {
+  switch (questionId) {
+    case 'productoServicio':
+      return validateProductoServicio(input);
+    case 'clienteIdeal':
+      return validateClienteIdeal(input);
+    default:
+      return { isValid: true };
+  }
+};
