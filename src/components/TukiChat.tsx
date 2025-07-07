@@ -116,8 +116,6 @@ const startOnboarding = () => {
   }, 2000); // Delay entre bienvenida y "pensando..."
 };
 
-
-
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
@@ -143,7 +141,53 @@ const startOnboarding = () => {
     }, 1500);
   };
 
-  const handleSendMessage = async () => {
+  const validateProductService = (input: string): boolean => {
+    const trimmedInput = input.trim().toLowerCase();
+    
+    // Lista de palabras que no son productos/servicios válidos
+    const invalidWords = [
+      'fuego', 'agua', 'aire', 'tierra', 'amor', 'felicidad', 'tristeza', 
+      'alegría', 'paz', 'guerra', 'libertad', 'justicia', 'verdad', 'mentira',
+      'tiempo', 'espacio', 'nada', 'todo', 'vida', 'muerte', 'sol', 'luna',
+      'cielo', 'infierno', 'dios', 'alma', 'espíritu', 'energía', 'luz', 'oscuridad'
+    ];
+    
+    // Si la respuesta es solo una palabra inválida
+    if (invalidWords.includes(trimmedInput)) {
+      return false;
+    }
+    
+    // Si es muy corta (menos de 3 caracteres)
+    if (trimmedInput.length < 3) {
+      return false;
+    }
+    
+    // Palabras clave que indican un producto/servicio válido
+    const validKeywords = [
+      'vendo', 'venta', 'servicio', 'ofrezco', 'brindo', 'tengo', 'soy',
+      'trabajo', 'empresa', 'negocio', 'tienda', 'local', 'consultorio',
+      'taller', 'curso', 'clase', 'enseño', 'capacito', 'reparo', 'fabrico',
+      'produzco', 'distribuyo', 'importo', 'exporto', 'alquilo', 'rento'
+    ];
+    
+    // Si contiene alguna palabra clave válida, es válido
+    const hasValidKeyword = validKeywords.some(keyword => 
+      trimmedInput.includes(keyword)
+    );
+    
+    if (hasValidKeyword) {
+      return true;
+    }
+    
+    // Si tiene más de 10 caracteres y no es solo una palabra inválida, probablemente es válido
+    if (trimmedInput.length > 10 && !invalidWords.includes(trimmedInput)) {
+      return true;
+    }
+    
+    return false;
+  };
+
+  const handleSendMessage = () => {
     if (!inputValue.trim()) return;
 
     const userMessage: Message = {
@@ -158,26 +202,16 @@ const startOnboarding = () => {
     // Validación especial para la primera pregunta (producto/servicio)
     const questionKey = questions[currentQuestion].id as keyof UserData;
     if (questionKey === 'productoServicio') {
-      try {
-        const validation = await runAction("validate", {
-          input: inputValue,
-          system: "Analiza si el texto describe claramente un producto o servicio comercial real que se puede vender. Ejemplos válidos: 'vendo ropa', 'soy contador', 'tengo una panadería', 'ofrezco clases de guitarra'. Ejemplos inválidos: 'fuego', 'amor', 'felicidad', 'aire', palabras abstractas o elementos no comercializables. Responde SOLO 'válido' o 'inválido'.",
-        });
-
-        if (validation.toLowerCase().includes('inválido')) {
-          const retryMessage: Message = {
-            id: "invalid-" + Date.now(),
-            text: "Mmm... No logro identificar un producto o servicio específico en tu respuesta. ¿Podés contarme qué vendés, qué servicio ofrecés, o cuál es tu negocio? Por ejemplo: 'Vendo ropa para niños', 'Soy diseñador gráfico', 'Tengo un restaurante', etc. 😊",
-            isBot: true,
-            timestamp: new Date()
-          };
-          setMessages(prev => [...prev, retryMessage]);
-          setInputValue('');
-          return;
-        }
-      } catch (error) {
-        console.log('Error en validación, continuando sin validar:', error);
-        // Si hay error en la validación, continúa sin validar
+      if (!validateProductService(inputValue)) {
+        const retryMessage: Message = {
+          id: "invalid-" + Date.now(),
+          text: "Mmm... No logro identificar un producto o servicio específico en tu respuesta. ¿Podés contarme qué vendés, qué servicio ofrecés, o cuál es tu negocio? Por ejemplo: 'Vendo ropa para niños', 'Soy diseñador gráfico', 'Tengo un restaurante', etc. 😊",
+          isBot: true,
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, retryMessage]);
+        setInputValue('');
+        return;
       }
     }
 
