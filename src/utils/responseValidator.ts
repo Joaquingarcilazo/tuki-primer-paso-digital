@@ -13,7 +13,10 @@ const invalidProducts = [
   'reír', 'dormir', 'comer', 'beber', 'respirar', 'pensar', 'soñar',
   'fumar', 'bailar', 'cantar', 'escuchar', 'mirar', 'tocar', 'oler',
   'calor', 'frío', 'lluvia', 'viento', 'nieve', 'hielo', 'vapor',
-  'luz', 'sombra', 'oscuridad', 'silencio', 'ruido', 'música', 'sonido'
+  'luz', 'sombra', 'oscuridad', 'silencio', 'ruido', 'música', 'sonido',
+  'violencia', 'odio', 'ira', 'venganza', 'maldad', 'crueldad', 'destrucción',
+  'caos', 'desastre', 'ruina', 'perdición', 'condenación', 'castigo',
+  'sufrimiento', 'tortura', 'agresión', 'ataque', 'daño', 'perjuicio'
 ];
 
 // Patrones que indican texto sin sentido
@@ -24,6 +27,17 @@ const gibberishPatterns = [
   /^[bcdfghjklmnpqrstvwxyz]{5,}$/i, // Solo consonantes largas
   /^[aeiou]{4,}$/i, // Solo vocales largas
   /\b(asdf|qwer|zxcv|hjkl|fghj|dfgh|sdfg|xcvb|vbnm)\b/i // Patrones de teclado
+];
+
+// Palabras que indican productos/servicios comerciales válidos
+const validBusinessIndicators = [
+  'vendo', 'venta', 'servicio', 'producto', 'negocio', 'empresa', 'tienda', 'local',
+  'ropa', 'comida', 'restaurante', 'panadería', 'peluquería', 'taller', 'consultorio',
+  'contador', 'abogado', 'médico', 'dentista', 'veterinario', 'profesor', 'tutor',
+  'limpieza', 'construcción', 'reparación', 'instalación', 'diseño', 'fotografía',
+  'catering', 'delivery', 'transporte', 'mudanza', 'jardinería', 'carpintería',
+  'plomería', 'electricidad', 'pintura', 'decoración', 'muebles', 'electrodomésticos',
+  'repuestos', 'accesorios', 'joyería', 'zapatos', 'bolsos', 'perfumes', 'cosméticos'
 ];
 
 export const validateProductoServicio = (input: string): ValidationResult => {
@@ -66,17 +80,37 @@ export const validateProductoServicio = (input: string): ValidationResult => {
     };
   }
 
-  // Verificar que tenga al menos una palabra significativa
+  // Verificar que tenga al menos una palabra significativa O un indicador de negocio válido
   const meaningfulWords = words.filter(word => 
     word.length > 2 && 
     !/^(el|la|los|las|un|una|de|del|en|con|por|para|que|es|son|muy|más|pero|como|todo|esta|este)$/.test(word)
   );
 
-  if (meaningfulWords.length === 0) {
+  const hasValidBusinessIndicator = words.some(word => 
+    validBusinessIndicators.includes(word) || 
+    validBusinessIndicators.some(indicator => word.includes(indicator))
+  );
+
+  if (meaningfulWords.length === 0 && !hasValidBusinessIndicator) {
     return {
       isValid: false,
       errorMessage: 'Necesito que me cuentes específicamente qué vendes o qué servicio ofrecés. ¿Podrías ser más claro?'
     };
+  }
+
+  // Verificar que no sea solo conceptos abstractos
+  if (meaningfulWords.length > 0 && !hasValidBusinessIndicator) {
+    const abstractWords = meaningfulWords.filter(word => 
+      invalidProducts.includes(word) || 
+      /^(belleza|libertad|justicia|verdad|mentira|esperanza|desesperanza|bondad)$/.test(word)
+    );
+    
+    if (abstractWords.length === meaningfulWords.length) {
+      return {
+        isValid: false,
+        errorMessage: 'Parece que mencionaste conceptos abstractos. Necesito que me cuentes sobre un producto concreto que vendas o un servicio específico que ofrezcas.'
+      };
+    }
   }
 
   return { isValid: true };
