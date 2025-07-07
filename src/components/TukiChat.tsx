@@ -116,6 +116,7 @@ const startOnboarding = () => {
 };
 
 
+
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
