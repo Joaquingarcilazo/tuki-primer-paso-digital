@@ -24,7 +24,7 @@ interface UserData {
 const questions = [
   {
     id: 'productoServicio',
-    text: '¡Perfecto! Empecemos conociendo tu negocio. ¿Qué tipo de producto o servicio ofrecés? Contame con detalles para poder ayudarte mejor 😊',
+    text: 'Empecemos conociendo tu negocio. ¿Qué tipo de producto o servicio ofrecés? Brindame detalles para poder ayudarte mejor 😊',
     placeholder: 'Por ejemplo: Vendo ropa deportiva para mujeres, soy contador, tengo una panadería...',
     type: 'textarea'
   },
