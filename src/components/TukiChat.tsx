@@ -94,7 +94,7 @@ const TukiChat: React.FC = () => {
     console.log('✨ Iniciando conversación con Tuki...');
     const welcomeMessage: Message = {
       id: 'welcome-' + Date.now() + '-' + Math.random(),
-      text: '¡Hola! 👋 Soy Tuki, tu asistente de marketing digital. Estoy aquí para ayudarte a crear campañas increíbles para tu negocio. Te voy a hacer algunas preguntas rápidas para conocerte mejor. ¿Estás listo?',
+      text: '¡Hola! 👋 Soy Tuki, tu asistente personal de marketing digital para emprendedores argentinos. Estoy acá para ayudarte a crear campañas impactantes y rápidas para tu negocio. ¿Arrancamos?',
       isBot: true,
       timestamp: new Date()
     };
