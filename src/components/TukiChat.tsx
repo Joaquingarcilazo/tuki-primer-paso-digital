@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Send, Edit3, Sparkles } from 'lucide-react';
 import ChatMessage from './ChatMessage';
 import OnboardingSummary from './OnboardingSummary';
+import { runAction } from 'lovable:actions';
 
 interface Message {
   id: string;
@@ -156,6 +157,24 @@ const startOnboarding = () => {
 
     // Guardar respuesta
     const questionKey = questions[currentQuestion].id as keyof UserData;
+    if (questionKey === 'productoServicio') {
+  const validation = await runAction("validate", {
+    input: inputValue,
+    system: "Respondé sólo con 'válido' si el texto describe claramente un producto o servicio real. Si no, respondé 'inválido'.",
+  });
+
+  if (validation.toLowerCase().includes('inválido')) {
+    const retryMessage: Message = {
+      id: "invalid-" + Date.now(),
+      text: "Mmm... No estoy seguro de haber entendido eso como un producto o servicio real. ¿Podés darme un poco más de detalle? 😊",
+      isBot: true,
+      timestamp: new Date()
+    };
+    setMessages(prev => [...prev, retryMessage]);
+    return;
+  }
+}
+
     const updatedUserData = {
       ...userData,
       [questionKey]: inputValue
