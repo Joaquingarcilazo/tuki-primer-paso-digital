@@ -1,3 +1,4 @@
+
 export interface ValidationResult {
   isValid: boolean;
   errorMessage?: string;
@@ -16,7 +17,18 @@ const invalidProducts = [
   'luz', 'sombra', 'oscuridad', 'silencio', 'ruido', 'música', 'sonido',
   'violencia', 'odio', 'ira', 'venganza', 'maldad', 'crueldad', 'destrucción',
   'caos', 'desastre', 'ruina', 'perdición', 'condenación', 'castigo',
-  'sufrimiento', 'tortura', 'agresión', 'ataque', 'daño', 'perjuicio'
+  'sufrimiento', 'tortura', 'agresión', 'ataque', 'daño', 'perjuicio',
+  'asesinato', 'asesinatos', 'matar', 'asesinar', 'homicidio', 'crimen',
+  'robo', 'robos', 'robar', 'hurto', 'estafa', 'fraude', 'droga', 'drogas'
+];
+
+// Patrones más específicos para detectar contenido inapropiado
+const inappropriatePatterns = [
+  /\b(asesinat|matar|mat[aáe]|homicidi|crimen|criminal)\w*\b/i,
+  /\b(rob[aoó]|hurt|estaf|fraud)\w*\b/i,
+  /\b(drog|narcotic|cocain|marihuan)\w*\b/i,
+  /\b(violenci|agresi[óo]n|tortur)\w*\b/i,
+  /\b(odio|venganz|maldad|crueldad)\b/i
 ];
 
 // Patrones que indican texto sin sentido
@@ -56,6 +68,16 @@ export const validateProductoServicio = (input: string): ValidationResult => {
     return {
       isValid: false,
       errorMessage: 'No veo que hayas descrito un producto o servicio real. ¿Podrías contarme qué es lo que ofrecés específicamente?'
+    };
+  }
+
+  // Verificar patrones inapropiados PRIMERO (antes de palabras individuales)
+  const hasInappropriatePattern = inappropriatePatterns.some(pattern => pattern.test(trimmed));
+  
+  if (hasInappropriatePattern) {
+    return {
+      isValid: false,
+      errorMessage: 'Eso no parece ser un producto o servicio legítimo que puedas ofrecer. ¿Podrías contarme sobre tu negocio real?'
     };
   }
 
