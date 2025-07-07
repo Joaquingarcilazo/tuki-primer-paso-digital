@@ -1,4 +1,3 @@
-
 export interface ValidationResult {
   isValid: boolean;
   errorMessage?: string;
@@ -19,7 +18,10 @@ const invalidProducts = [
   'caos', 'desastre', 'ruina', 'perdición', 'condenación', 'castigo',
   'sufrimiento', 'tortura', 'agresión', 'ataque', 'daño', 'perjuicio',
   'asesinato', 'asesinatos', 'matar', 'asesinar', 'homicidio', 'crimen',
-  'robo', 'robos', 'robar', 'hurto', 'estafa', 'fraude', 'droga', 'drogas'
+  'robo', 'robos', 'robar', 'hurto', 'estafa', 'fraude', 'droga', 'drogas',
+  'arma', 'armas', 'pistola', 'pistolas', 'revólver', 'rifle', 'fusil',
+  'bala', 'balas', 'munición', 'municiones', 'explosivo', 'explosivos',
+  'bomba', 'bombas', 'cuchillo', 'cuchillos', 'navaja', 'navajas'
 ];
 
 // Patrones más específicos para detectar contenido inapropiado
@@ -28,7 +30,10 @@ const inappropriatePatterns = [
   /\b(rob[aoó]|hurt|estaf|fraud)\w*\b/i,
   /\b(drog|narcotic|cocain|marihuan)\w*\b/i,
   /\b(violenci|agresi[óo]n|tortur)\w*\b/i,
-  /\b(odio|venganz|maldad|crueldad)\b/i
+  /\b(odio|venganz|maldad|crueldad)\b/i,
+  /\b(arm[oa]s?|pistol|revólver|rifle|fusil)\w*\b/i,
+  /\b(bal[oa]s?|munici[óo]n|explosiv)\w*\b/i,
+  /\b(bomb[oa]s?|cuchill|navaj)\w*\b/i
 ];
 
 // Patrones que indican texto sin sentido
