@@ -6,7 +6,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Send, Edit3, Sparkles } from 'lucide-react';
 import ChatMessage from './ChatMessage';
 import OnboardingSummary from './OnboardingSummary';
-import { runAction } from 'lovable:actions';
 
 interface Message {
   id: string;
@@ -25,7 +24,7 @@ interface UserData {
 const questions = [
   {
     id: 'productoServicio',
-    text: '¡Perfecto! Empecemos conociendo tu negocio. ¿Qué tipo de producto o servicio ofrecés? Contame con detalles para poder ayudarte mejor 😊',
+    text: 'Empecemos conociendo tu negocio. ¿Qué tipo de producto o servicio ofrecés? Brindame detalles para poder ayudarte mejor 😊',
     placeholder: 'Por ejemplo: Vendo ropa deportiva para mujeres, soy contador, tengo una panadería...',
     type: 'textarea'
   },
@@ -91,24 +90,32 @@ const TukiChat: React.FC = () => {
     }, 800);
   }, []); // Sin dependencias para que se ejecute solo al montar
 
-  const startOnboarding = () => {
-    console.log('✨ Iniciando conversación con Tuki...');
-    const welcomeMessage: Message = {
-      id: 'welcome-' + Date.now() + '-' + Math.random(),
-      text: '¡Hola! 👋 Soy Tuki, tu asistente de marketing digital. Estoy aquí para ayudarte a crear campañas increíbles para tu negocio. Te voy a hacer algunas preguntas rápidas para conocerte mejor. ¿Estás listo?',
-      isBot: true,
-      timestamp: new Date()
-    };
-    
-    setMessages([welcomeMessage]);
-    setHasStarted(true);
-    
-    // Mostrar la primera pregunta
+const startOnboarding = () => {
+  console.log('✨ Iniciando conversación con Tuki...');
+  const welcomeMessage: Message = {
+    id: 'welcome-' + Date.now() + '-' + Math.random(),
+    text: '¡Hola! 👋 Soy Tuki, tu asistente personal de marketing digital para emprendedores argentinos. Estoy acá para ayudarte a crear campañas impactantes y rápidas para tu negocio. ¿Arrancamos?',
+    isBot: true,
+    timestamp: new Date()
+  };
+
+  setMessages([welcomeMessage]);
+  setHasStarted(true);
+
+  // Simular que Tuki está pensando 1.5s antes de la primera pregunta
+  setTimeout(() => {
+    setIsTyping(true);
+
     setTimeout(() => {
+      setIsTyping(false);
       setCurrentQuestion(0);
       showNextQuestion(0);
-    }, 2000);
-  };
+    }, 1500); // Duración del "pensando..."
+    
+  }, 2000); // Delay entre bienvenida y "pensando..."
+};
+
+
 
   useEffect(() => {
     scrollToBottom();
@@ -135,57 +142,41 @@ const TukiChat: React.FC = () => {
     }, 1500);
   };
 
-  const handleSendMessage = async () => {
-  if (!inputValue.trim()) return;
+  const handleSendMessage = () => {
+    if (!inputValue.trim()) return;
 
-  const userMessage: Message = {
-    id: Date.now().toString() + '-' + Math.random(),
-    text: inputValue,
-    isBot: false,
-    timestamp: new Date()
+    const userMessage: Message = {
+      id: Date.now().toString() + '-' + Math.random(),
+      text: inputValue,
+      isBot: false,
+      timestamp: new Date()
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+
+    // Guardar respuesta
+    const questionKey = questions[currentQuestion].id as keyof UserData;
+    const updatedUserData = {
+      ...userData,
+      [questionKey]: inputValue
+    };
+    setUserData(updatedUserData);
+
+    setInputValue('');
+    
+    // Avanzar a la siguiente pregunta
+    const nextQuestion = currentQuestion + 1;
+    setCurrentQuestion(nextQuestion);
+
+    // Mostrar siguiente pregunta o completar
+    setTimeout(() => {
+      if (nextQuestion < questions.length) {
+        showNextQuestion(nextQuestion);
+      } else {
+        completeOnboarding(updatedUserData);
+      }
+    }, 1000);
   };
-
-  setMessages(prev => [...prev, userMessage]);
-
-  const questionKey = questions[currentQuestion].id as keyof UserData;
-
-  // 🧠 VALIDAR CON IA SOLO EN LA PRIMERA PREGUNTA
-  if (questionKey === 'productoServicio') {
-    const validation = await runAction("validate", {
-      input: inputValue,
-      system: "Actuá como un asesor de marketing. Respondé SOLO con 'válido' si el texto parece describir un producto o servicio real. Si no, respondé 'inválido'."
-    });
-
-    if (validation.toLowerCase().includes("inválido")) {
-      const retryMessage: Message = {
-        id: "invalid-producto-servicio-" + Date.now(),
-        text: "Mmm... No estoy seguro de haber entendido eso como un producto o servicio real. ¿Podés darme un poco más de detalle? 😊",
-        isBot: true,
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, retryMessage]);
-      return;
-    }
-  }
-
-  const updatedUserData = {
-    ...userData,
-    [questionKey]: inputValue
-  };
-  setUserData(updatedUserData);
-  setInputValue('');
-
-  const nextQuestion = currentQuestion + 1;
-  setCurrentQuestion(nextQuestion);
-
-  setTimeout(() => {
-    if (nextQuestion < questions.length) {
-      showNextQuestion(nextQuestion);
-    } else {
-      completeOnboarding(updatedUserData);
-    }
-  }, 1000);
-};
 
   const handleOptionSelect = (option: string) => {
     const userMessage: Message = {
@@ -304,17 +295,21 @@ const TukiChat: React.FC = () => {
           ))}
           
           {isTyping && (
-            <div className="flex items-center space-x-2 text-gray-500">
-              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                <span className="text-sm">🤖</span>
-              </div>
-              <div className="flex space-x-1">
-                <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"></div>
-                <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-              </div>
-            </div>
-          )}
+  <div className="flex items-center gap-3 px-4 py-2 text-gray-600">
+    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+      <span className="text-sm">🤖</span>
+    </div>
+    <div className="flex items-center gap-2">
+      <div className="flex space-x-1">
+        <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"></div>
+        <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+        <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+      </div>
+      <span className="text-sm italic text-blue-600">pensando...</span>
+    </div>
+  </div>
+)}
+
           
           <div ref={messagesEndRef} />
         </div>
