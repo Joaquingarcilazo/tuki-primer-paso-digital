@@ -1,4 +1,3 @@
-
 export interface ValidationResult {
   isValid: boolean;
   errorMessage?: string;
@@ -9,7 +8,12 @@ const invalidProducts = [
   'fuego', 'agua', 'aire', 'tierra', 'sol', 'luna', 'cielo', 'mar', 'océano',
   'amor', 'felicidad', 'tristeza', 'miedo', 'alegría', 'dolor', 'paz', 'guerra',
   'vida', 'muerte', 'tiempo', 'espacio', 'universo', 'dios', 'diablo',
-  'nada', 'todo', 'algo', 'nada más', 'cualquier cosa'
+  'nada', 'todo', 'algo', 'nada más', 'cualquier cosa',
+  'quemar', 'arder', 'volar', 'caminar', 'correr', 'saltar', 'gritar', 'llorar',
+  'reír', 'dormir', 'comer', 'beber', 'respirar', 'pensar', 'soñar',
+  'fumar', 'bailar', 'cantar', 'escuchar', 'mirar', 'tocar', 'oler',
+  'calor', 'frío', 'lluvia', 'viento', 'nieve', 'hielo', 'vapor',
+  'luz', 'sombra', 'oscuridad', 'silencio', 'ruido', 'música', 'sonido'
 ];
 
 // Patrones que indican texto sin sentido
