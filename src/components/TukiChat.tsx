@@ -541,7 +541,7 @@ const TukiChat: React.FC = () => {
     setTimeout(() => {
       const completionMessage: Message = {
         id: Date.now().toString() + '-' + Math.random(),
-        text: '¡Perfecto! Ya tengo toda la información que necesito. Ahora voy a preparar un resumen de tu briefing 📋',
+        text: '¡Perfecto! Ya tengo toda la información que necesito. Ahora voy a preparar un resumen 📋',
         isBot: true,
         timestamp: new Date()
       };
