@@ -82,11 +82,14 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
         return;
       }
 
+      // Obtener la URL real de la imagen
+      const imageData = getImageForId(imageToUse);
+      
       // Mostrar preview de Instagram primero
       setShowInstagramPreview(true);
       
       // Simular publicación en Instagram
-      const instagramPost = await publishToInstagram(campaignWithImages, userData, imageToUse);
+      const instagramPost = await publishToInstagram(campaignWithImages, userData, imageData.url);
       
       // Marcar como publicado exitosamente
       setPublishedSuccessfully(true);
@@ -96,11 +99,6 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
         title: "🎉 ¡Campaña publicada!",
         description: `Tu publicación de Instagram fue programada exitosamente. ID: ${instagramPost.id.slice(-8)}`,
       });
-      
-      // Ocultar preview después de mostrar el toast
-      setTimeout(() => {
-        setShowInstagramPreview(false);
-      }, 3000);
       
     } catch (error) {
       console.error('Error publicando campaña:', error);
@@ -112,6 +110,10 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
     } finally {
       setIsPublishing(false);
     }
+  };
+
+  const handleClosePreview = () => {
+    setShowInstagramPreview(false);
   };
 
   const handleBackFromImageGenerator = () => {
@@ -237,15 +239,33 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
             </h3>
             <InstagramPreview
               caption={campaignWithImages.texto}
-              imageUrl={campaignWithImages.imagenes?.[0] || ''}
+              imageUrl={campaignWithImages.imagenes?.[0] ? getImageForId(campaignWithImages.imagenes[0]).url : ''}
               hashtags={['#emprendimiento', '#argentina', '#negocio']}
               accountName={userData.productoServicio.toLowerCase().replace(/\s+/g, '_')}
             />
-            <div className="mt-4 text-center">
-              <div className="inline-flex items-center space-x-2 text-green-600">
-                <div className="w-2 h-2 bg-green-600 rounded-full animate-pulse"></div>
-                <span className="text-sm">Publicando en Instagram...</span>
+            <div className="mt-6 flex flex-col space-y-3">
+              <div className="text-center">
+                <div className="inline-flex items-center space-x-2 text-green-600 mb-4">
+                  <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                  <span className="text-sm">¡Publicación exitosa!</span>
+                </div>
               </div>
+              
+              <Button
+                onClick={handleViewDashboard}
+                className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white"
+              >
+                <BarChart3 className="w-4 h-4 mr-2" />
+                Ver rendimiento económico
+              </Button>
+              
+              <Button
+                onClick={handleClosePreview}
+                variant="outline"
+                className="w-full"
+              >
+                Cerrar preview
+              </Button>
             </div>
           </div>
         </div>
@@ -376,22 +396,11 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
                   <Button
                     onClick={handlePublishCampaign}
                     disabled={isPublishing}
-                    className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50"
+                    className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50"
                   >
                     <Rocket className="w-5 h-5 mr-2" />
                     {isPublishing ? 'Publicando...' : 'Publicar en Instagram'}
                   </Button>
-
-                  {/* Botón para ver dashboard - siempre visible después de publicar */}
-                  {publishedSuccessfully && (
-                    <Button
-                      onClick={handleViewDashboard}
-                      className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
-                    >
-                      <BarChart3 className="w-5 h-5 mr-2" />
-                      Ver rendimiento económico
-                    </Button>
-                  )}
                 </>
               )}
             </div>
@@ -402,11 +411,6 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
       {/* Info adicional */}
       <div className="text-center text-sm text-gray-500">
         <p>🤖 Esta campaña fue generada automáticamente por Tuki basándose en tu briefing</p>
-        {publishedSuccessfully && (
-          <p className="mt-2 text-green-600 font-medium">
-            ✅ ¡Campaña publicada! Podés ver su rendimiento económico haciendo click en "Ver rendimiento económico"
-          </p>
-        )}
       </div>
     </div>
   );
