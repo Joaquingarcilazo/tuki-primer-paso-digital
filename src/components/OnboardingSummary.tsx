@@ -36,7 +36,7 @@ const OnboardingSummary: React.FC<OnboardingSummaryProps> = ({ userData, onEdit 
           ¡Perfecto! Tu resumen está listo
         </h2>
         <p className="text-gray-600">
-          Revisá la información que me diste y cuando estés conforme, podemos generar tu primera campaña
+          Revisá la información que me diste y cuando estés conforme, generaré tu campaña
         </p>
       </div>
 
@@ -81,7 +81,7 @@ const OnboardingSummary: React.FC<OnboardingSummaryProps> = ({ userData, onEdit 
             <div className="space-y-2">
               <h3 className="font-semibold text-gray-800 flex items-center">
                 <div className="w-2 h-2 bg-orange-600 rounded-full mr-2"></div>
-                Tus redes sociales
+                Tus canales digitales
               </h3>
               <div className="bg-gray-50 rounded-lg p-3">
                 {userData.redesSociales.length > 0 ? (
@@ -110,7 +110,7 @@ const OnboardingSummary: React.FC<OnboardingSummaryProps> = ({ userData, onEdit 
                 className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
               >
                 <Sparkles className="w-5 h-5 mr-2" />
-                Generar mi primera campaña
+                Generar mi campaña
               </Button>
               
               <Button

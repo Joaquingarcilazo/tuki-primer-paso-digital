@@ -94,7 +94,7 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
       // Mostrar resultado exitoso
       toast({
         title: "🎉 ¡Campaña publicada!",
-        description: `Tu publicación de Instagram fue programada exitosamente. ID: ${instagramPost.id.slice(-8)}`,
+        description: `Tu publicación de Instagram fue publicada exitosamente. ID: ${instagramPost.id.slice(-8)}`,
       });
       
       // Mostrar el paso intermedio del posteo publicado
@@ -201,13 +201,13 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
             className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
           >
             <BarChart3 className="w-5 h-5 mr-2" />
-            Ver rendimiento económico
+            Impacto de tu inversión
           </Button>
         </div>
 
         {/* Info adicional */}
         <div className="text-center text-sm text-gray-500">
-          <p><Hand className="w-4 h-4 inline mr-1" /> Ahora podés ver en tiempo real cómo está funcionando tu campaña</p>
+          <p><Hand className="w-4 h-4 inline mr-1" /> Aquí arriba podés ver en tiempo real cómo está funcionando tu campaña</p>
         </div>
       </div>
     );
@@ -332,7 +332,7 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
                 </div>
               </div>
 
-              {/* Canal */}
+              {/* Canal digital */}
               <div className="space-y-3">
                 <div className="flex items-center space-x-2">
                   <span className="text-2xl">🛰️</span>
@@ -408,7 +408,7 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
 
       {/* Info adicional */}
       <div className="text-center text-sm text-gray-500">
-        <p>🤖 Esta campaña fue generada automáticamente por Tuki basándose en tu briefing</p>
+        <p>🤖 Esta campaña fue generada por Tuki a partir de tu negocio</p>
       </div>
     </div>
   );

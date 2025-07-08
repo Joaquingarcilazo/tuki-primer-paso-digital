@@ -83,7 +83,7 @@ const CampaignImageGenerator: React.FC<CampaignImageGeneratorProps> = ({
             Generá imágenes para tu campaña
           </h2>
           <p className="text-gray-600">
-            Creá imágenes atractivas que complementen tu mensaje publicitario
+            Creá imágenes atractivas que complementen tu mensaje
           </p>
         </div>
       </div>
@@ -138,7 +138,7 @@ const CampaignImageGenerator: React.FC<CampaignImageGeneratorProps> = ({
               <Sparkles className="w-8 h-8 text-purple-600 animate-pulse" />
             </div>
             <h3 className="text-xl font-semibold text-gray-800">
-              ¡Creando tus imágenes!
+              ¡Creando imágenes!
             </h3>
             <p className="text-gray-600">
               Estoy generando imágenes únicas para tu campaña...

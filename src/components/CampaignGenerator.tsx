@@ -244,7 +244,7 @@ const CampaignGenerator: React.FC<CampaignGeneratorProps> = ({ userData, audienc
             Generando tu campaña perfecta
           </h2>
           <p className="text-gray-600">
-            Tuki está analizando tu briefing para crear una campaña personalizada
+            Tuki está analizando tu resumen para crear una campaña personalizada
           </p>
         </div>
       </div>
