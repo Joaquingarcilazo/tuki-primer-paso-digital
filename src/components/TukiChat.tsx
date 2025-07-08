@@ -32,7 +32,7 @@ interface ClienteIdealData {
 const questions = [
   {
     id: 'productoServicio',
-    text: 'Empecemos conociendo tu negocio. ¿Qué tipo de producto o servicio ofrecés? Brindame detalles para poder ayudarte mejor 😊',
+    text: 'Empecemos conociendo tu negocio. ¿Qué tipo de producto o servicio ofrecés? Brindame detalles para ayudarte mejor 😊',
     placeholder: 'Por ejemplo: Vendo ropa deportiva para mujeres, soy contador, tengo una panadería...',
     type: 'textarea'
   },
