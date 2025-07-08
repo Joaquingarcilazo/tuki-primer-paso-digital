@@ -111,11 +111,11 @@ const CampaignDashboard: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
             <div>
               <p className="text-sm text-gray-600">Inversión total</p>
-              <p className="text-2xl font-bold text-gray-800">$250,000</p>
+              <p className="text-2xl font-bold text-gray-800">$2,500,000</p>
             </div>
             <div>
               <p className="text-sm text-gray-600">Ingresos generados</p>
-              <p className="text-2xl font-bold text-green-600">$785,000</p>
+              <p className="text-2xl font-bold text-green-600">$7,850,000</p>
             </div>
             <div>
               <p className="text-sm text-gray-600">Retorno</p>
@@ -151,7 +151,7 @@ const CampaignDashboard: React.FC = () => {
                 axisLine={false}
                 tickLine={false}
                 tick={{ fontSize: 12, fill: '#666' }}
-                domain={[0, 'dataMax + 50000']}
+                domain={[0, 'dataMax + 500000']}
                 tickFormatter={(value) => `$${value.toLocaleString()}`}
               />
               <Bar dataKey="amount" radius={[4, 4, 0, 0]}>
@@ -215,7 +215,7 @@ const CampaignDashboard: React.FC = () => {
                 axisLine={false}
                 tickLine={false}
                 tick={{ fontSize: 12, fill: '#666' }}
-                domain={[0, 'dataMax + 10000']}
+                domain={[0, 'dataMax + 100000']}
               />
               <Bar dataKey="impresiones" fill="#3b82f6" radius={[4, 4, 0, 0]} />
               <Bar dataKey="clicks" fill="#10b981" radius={[4, 4, 0, 0]} />
@@ -268,7 +268,7 @@ const CampaignDashboard: React.FC = () => {
       </div>
 
       {/* Call to Action Button */}
-      <Card className="p-8 bg-gradient-to-r from-orange-100 to-pink-100 border border-orange-200">
+      <Card className="p-8 bg-gradient-to-r from-blue-100 to-cyan-100 border border-blue-200">
         <div className="text-center">
           <h3 className="text-2xl font-bold text-gray-800 mb-4">
             🚀 ¿Te gustan estos resultados?
@@ -280,7 +280,7 @@ const CampaignDashboard: React.FC = () => {
           <Button 
             onClick={handleTryFree}
             size="lg" 
-            className="bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white px-8 py-3 text-lg font-semibold"
+            className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-8 py-3 text-lg font-semibold"
           >
             Probar Tuki gratis
             <ArrowRight className="ml-2 w-5 h-5" />
