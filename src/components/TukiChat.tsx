@@ -115,7 +115,7 @@ const startOnboarding = () => {
   console.log('✨ Iniciando conversación con Tuki...');
   const welcomeMessage: Message = {
     id: 'welcome-' + Date.now() + '-' + Math.random(),
-    text: '¡Hola! 👋 Soy Tuki, tu asistente personal de marketing digital para emprendedores argentinos. Estoy acá para ayudarte a crear campañas impactantes y rápidas para tu negocio. ¿Arrancamos?',
+    text: '¡Hola! 👋 Soy Tuki, tu asistente personal. Te ayudaré 24/7 a crear campañas efectivas de marketing digital para tu negocio. ¿Comenzamos?',
     isBot: true,
     timestamp: new Date()
   };
