@@ -143,35 +143,10 @@ export const validateProductoServicio = (input: string): ValidationResult => {
   return { isValid: true };
 };
 
-export const validateClienteIdeal = (input: string): ValidationResult => {
-  const trimmed = input.trim().toLowerCase();
-  
-  if (trimmed.length < 5) {
-    return {
-      isValid: false,
-      errorMessage: 'Necesito más información sobre tu cliente ideal. ¿Podrías describir con más detalle quién es esa persona que realmente necesita lo que ofrecés?'
-    };
-  }
-
-  // Verificar patrones de texto sin sentido
-  const isGibberish = gibberishPatterns.some(pattern => pattern.test(trimmed));
-  
-  if (isGibberish) {
-    return {
-      isValid: false,
-      errorMessage: 'No logro entender bien tu respuesta. ¿Podrías describir nuevamente quién es tu cliente ideal? Por ejemplo: "mujeres de 25-40 años", "pequeños empresarios", etc.'
-    };
-  }
-
-  return { isValid: true };
-};
-
 export const validateResponse = (questionId: string, input: string): ValidationResult => {
   switch (questionId) {
     case 'productoServicio':
       return validateProductoServicio(input);
-    case 'clienteIdeal':
-      return validateClienteIdeal(input);
     default:
       return { isValid: true };
   }

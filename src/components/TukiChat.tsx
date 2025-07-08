@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -31,9 +32,26 @@ const questions = [
   },
   {
     id: 'clienteIdeal',
-    text: '¡Genial! Ahora contame, ¿quién es tu cliente ideal? Pensá en esa persona que realmente necesita lo que ofrecés 🎯',
-    placeholder: 'Por ejemplo: Mujeres de 25-40 años que hacen ejercicio, pequeños empresarios, familias del barrio...',
-    type: 'textarea'
+    text: '¡Genial! Ahora ayudame a definir tu cliente ideal. Seleccioná todas las características que mejor describan a tu público objetivo 🎯',
+    type: 'multiple',
+    options: [
+      'Jóvenes (18-30 años)',
+      'Adultos (30-50 años)',
+      'Adultos mayores (50+ años)',
+      'Hombres',
+      'Mujeres',
+      'Familias con hijos',
+      'Profesionales/Ejecutivos',
+      'Emprendedores/Pequeños empresarios',
+      'Estudiantes',
+      'Personas con poder adquisitivo alto',
+      'Personas con presupuesto moderado',
+      'Personas que buscan calidad premium',
+      'Personas que buscan precio accesible',
+      'Personas activas/deportistas',
+      'Personas interesadas en tecnología',
+      'Personas del barrio/zona local'
+    ]
   },
   {
     id: 'objetivoMarketing',
