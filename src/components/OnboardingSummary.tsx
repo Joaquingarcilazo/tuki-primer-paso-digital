@@ -33,7 +33,7 @@ const OnboardingSummary: React.FC<OnboardingSummaryProps> = ({ userData, onEdit 
           <CheckCircle className="w-8 h-8 text-green-600" />
         </div>
         <h2 className="text-3xl font-bold text-gray-800 mb-2">
-          ¡Perfecto! Tu briefing está listo
+          ¡Perfecto! Tu resumen está listo
         </h2>
         <p className="text-gray-600">
           Revisá la información que me diste y cuando estés conforme, podemos generar tu primera campaña
