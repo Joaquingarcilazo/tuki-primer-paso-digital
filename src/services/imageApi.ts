@@ -2,15 +2,10 @@
 import axios from 'axios';
 
 // Simulador de generación de imágenes usando Unsplash API
-export async function POST(request: Request) {
+export async function generateImage(prompt: string): Promise<string> {
   try {
-    const { prompt } = await request.json();
-    
     if (!prompt) {
-      return new Response(JSON.stringify({ error: 'Prompt is required' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
+      throw new Error('Prompt is required');
     }
 
     // Usar Unsplash API para obtener imágenes relacionadas al prompt
@@ -24,17 +19,14 @@ export async function POST(request: Request) {
         `https://api.unsplash.com/search/photos?query=${encodeURIComponent(searchQuery)}&per_page=1&orientation=landscape`,
         {
           headers: {
-            'Authorization': 'Client-ID 8QFJQg4j5U8N-HuE_XXX' // Demo key (limitada)
+            'Authorization': 'Client-ID YOUR_UNSPLASH_ACCESS_KEY' // Se necesita una clave real
           }
         }
       );
 
       if (unsplashResponse.data.results && unsplashResponse.data.results.length > 0) {
         const imageUrl = unsplashResponse.data.results[0].urls.regular;
-        return new Response(JSON.stringify({ url: imageUrl }), {
-          status: 200,
-          headers: { 'Content-Type': 'application/json' }
-        });
+        return imageUrl;
       }
     } catch (unsplashError) {
       console.log('Unsplash API failed, using fallback images');
@@ -42,18 +34,11 @@ export async function POST(request: Request) {
 
     // Fallback: usar imágenes de demostración basadas en el tipo de producto
     const fallbackImage = getFallbackImage(prompt);
-    
-    return new Response(JSON.stringify({ url: fallbackImage }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    return fallbackImage;
 
   } catch (error) {
     console.error('Error generating image:', error);
-    return new Response(JSON.stringify({ error: 'Failed to generate image' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    throw new Error('Failed to generate image');
   }
 }
 
@@ -74,7 +59,7 @@ function getFallbackImage(prompt: string): string {
   if (lowerPrompt.includes('comida') || lowerPrompt.includes('restaurante') || lowerPrompt.includes('alimento')) {
     return 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&h=400&fit=crop';
   }
-  if (lowerPrompt.includes('ropa') || lowerPrompt.includes('moda') || lowerPrompt.includes('vestimenta')) {
+  if (lowerPrompt.includes('ropa') || lowerPrompt.includes('moda') || lowerPrompt.includes('vestimenta') || lowerPrompt.includes('tenis')) {
     return 'https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=600&h=400&fit=crop';
   }
   if (lowerPrompt.includes('tecnología') || lowerPrompt.includes('software') || lowerPrompt.includes('app')) {
@@ -88,6 +73,9 @@ function getFallbackImage(prompt: string): string {
   }
   if (lowerPrompt.includes('servicio') || lowerPrompt.includes('consultoría') || lowerPrompt.includes('asesor')) {
     return 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=600&h=400&fit=crop';
+  }
+  if (lowerPrompt.includes('deportes') || lowerPrompt.includes('deporte') || lowerPrompt.includes('raquetas') || lowerPrompt.includes('tenis')) {
+    return 'https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=600&h=400&fit=crop';
   }
   
   // Imagen por defecto para productos/servicios generales
