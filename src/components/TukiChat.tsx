@@ -703,33 +703,35 @@ const TukiChat: React.FC = () => {
               </div>
             ) : currentQuestionData.type === 'multiple' ? (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4 max-w-3xl mx-auto">
-                  {currentQuestionData.options?.map((option) => {
-                    let isSelected = false;
-                    
-                    if (currentQuestionData.id === 'edad') {
-                      isSelected = clienteIdealData.edad.includes(option);
-                    } else if (currentQuestionData.id === 'genero') {
-                      isSelected = clienteIdealData.genero.includes(option);
-                    } else if (currentQuestionData.id === 'nivelAdquisitivo') {
-                      isSelected = clienteIdealData.nivelAdquisitivo.includes(option);
-                    } else if (currentQuestionData.id === 'caracteristicasAdicionales') {
-                      isSelected = clienteIdealData.caracteristicasAdicionales.includes(option);
-                    } else if (currentQuestionData.id === 'redesSociales') {
-                      isSelected = userData.redesSociales.includes(option);
-                    }
-                    
-                    return (
-                      <Button
-                        key={option}
-                        variant={isSelected ? "default" : "outline"}
-                        onClick={() => handleMultipleSelect(option)}
-                        className="text-sm h-auto p-3 text-wrap justify-start"
-                      >
-                        {option}
-                      </Button>
-                    );
-                  })}
+                <div className="max-h-64 overflow-y-auto mb-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-3xl mx-auto">
+                    {currentQuestionData.options?.map((option) => {
+                      let isSelected = false;
+                      
+                      if (currentQuestionData.id === 'edad') {
+                        isSelected = clienteIdealData.edad.includes(option);
+                      } else if (currentQuestionData.id === 'genero') {
+                        isSelected = clienteIdealData.genero.includes(option);
+                      } else if (currentQuestionData.id === 'nivelAdquisitivo') {
+                        isSelected = clienteIdealData.nivelAdquisitivo.includes(option);
+                      } else if (currentQuestionData.id === 'caracteristicasAdicionales') {
+                        isSelected = clienteIdealData.caracteristicasAdicionales.includes(option);
+                      } else if (currentQuestionData.id === 'redesSociales') {
+                        isSelected = userData.redesSociales.includes(option);
+                      }
+                      
+                      return (
+                        <Button
+                          key={option}
+                          variant={isSelected ? "default" : "outline"}
+                          onClick={() => handleMultipleSelect(option)}
+                          className="text-sm h-auto p-3 text-wrap justify-start"
+                        >
+                          {option}
+                        </Button>
+                      );
+                    })}
+                  </div>
                 </div>
                 <div className="flex justify-center">
                   <Button 
