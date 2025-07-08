@@ -128,7 +128,7 @@ const OnboardingSummary: React.FC<OnboardingSummaryProps> = ({ userData, onEdit 
 
       {/* Additional Info */}
       <div className="text-center text-sm text-gray-500">
-        <p>💾 Tu información se guardó localmente en tu navegador</p>
+        <p>💾 Vas muy bien!!!</p>
       </div>
     </div>
   );
