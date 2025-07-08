@@ -46,7 +46,7 @@ const questions = [
     id: 'genero',
     text: '¡Excelente! Ahora, ¿a qué géneros está dirigido tu producto o servicio? Podés seleccionar todas las opciones que apliquen 👥',
     type: 'multiple',
-    options: ['Hombres', 'Mujeres', 'Ambos géneros', 'No binario/Otros']
+    options: ['Hombres', 'Mujeres', 'No binario/Otros']
   },
   {
     id: 'nivelAdquisitivo',
