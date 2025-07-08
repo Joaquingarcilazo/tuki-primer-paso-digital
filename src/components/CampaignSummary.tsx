@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Edit3, Rocket, Target, DollarSign, Calendar, Radio, Image, BarChart3, Sparkles } from 'lucide-react';
+import { ArrowLeft, Edit3, Rocket, Target, DollarSign, Calendar, Radio, Image, BarChart3, Sparkles, CheckCircle } from 'lucide-react';
 import { Campaign, UserData } from '../types/campaign';
 import CampaignImageGenerator from './CampaignImageGenerator';
 import CampaignDashboard from './CampaignDashboard';
@@ -39,6 +39,7 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
   const [showDashboard, setShowDashboard] = useState(false);
   const [publishedSuccessfully, setPublishedSuccessfully] = useState(false);
   const [showEditBriefing, setShowEditBriefing] = useState(false);
+  const [showPublishedPost, setShowPublishedPost] = useState(false);
 
   // Imágenes específicas para cada tipo de negocio
   const businessImages = [
@@ -97,8 +98,8 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
         description: `Tu publicación de Instagram fue programada exitosamente. ID: ${instagramPost.id.slice(-8)}`,
       });
       
-      // Ir directamente al dashboard después de publicar
-      setShowDashboard(true);
+      // Mostrar el paso intermedio del posteo publicado
+      setShowPublishedPost(true);
       
     } catch (error) {
       console.error('Error publicando campaña:', error);
@@ -132,6 +133,15 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
     setShowEditBriefing(false);
   };
 
+  const handleBackFromPublishedPost = () => {
+    setShowPublishedPost(false);
+  };
+
+  const handleContinueFromPublishedPost = () => {
+    setShowPublishedPost(false);
+    setShowDashboard(true);
+  };
+
   // Mostrar editor de briefing si está activado
   if (showEditBriefing) {
     return <TukiChat />;
@@ -145,6 +155,62 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
         onBack={handleBackFromImageGenerator}
         onContinue={handleImagesGenerated}
       />
+    );
+  }
+
+  // Mostrar paso intermedio del posteo publicado
+  if (showPublishedPost) {
+    return (
+      <div className="max-w-4xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="flex items-center space-x-4">
+          <Button
+            onClick={handleBackFromPublishedPost}
+            variant="outline"
+            size="icon"
+            className="rounded-full"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <div className="text-center flex-1">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle className="w-8 h-8 text-green-600" />
+            </div>
+            <h2 className="text-3xl font-bold text-gray-800 mb-2">
+              🎉 ¡Posteo publicado!
+            </h2>
+            <p className="text-gray-600">
+              Tu campaña ya está corriendo en Instagram. Mirá cómo quedó:
+            </p>
+          </div>
+        </div>
+
+        {/* Instagram Post Display */}
+        <div className="flex justify-center">
+          <InstagramPreview
+            caption={campaignWithImages.texto}
+            imageUrl={getImageForId(campaignWithImages.imagenes![0]).url}
+            hashtags={['#emprendimiento', '#argentina', '#negocio']}
+            accountName={userData.productoServicio.split(' ')[0].toLowerCase()}
+          />
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex justify-center space-x-4">
+          <Button
+            onClick={handleContinueFromPublishedPost}
+            className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+          >
+            <BarChart3 className="w-5 h-5 mr-2" />
+            Ver rendimiento económico
+          </Button>
+        </div>
+
+        {/* Info adicional */}
+        <div className="text-center text-sm text-gray-500">
+          <p>📊 Ahora podés ver en tiempo real cómo está funcionando tu campaña</p>
+        </div>
+      </div>
     );
   }
 
@@ -217,7 +283,7 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-6">
+      <div className="grid lg:grid-cols-1 gap-6">
         {/* Campaign Summary Card */}
         <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-0 p-8">
           <div className="space-y-8">
@@ -354,21 +420,6 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
             </div>
           </div>
         </Card>
-
-        {/* Instagram Preview - Solo mostrar si hay imágenes */}
-        {campaignWithImages.imagenes && campaignWithImages.imagenes.length > 0 && (
-          <div className="space-y-4">
-            <h3 className="text-xl font-bold text-gray-800 text-center">
-              📱 Preview de Instagram
-            </h3>
-            <InstagramPreview
-              caption={campaignWithImages.texto}
-              imageUrl={getImageForId(campaignWithImages.imagenes[0]).url}
-              hashtags={['#emprendimiento', '#argentina', '#negocio']}
-              accountName={userData.productoServicio.split(' ')[0].toLowerCase()}
-            />
-          </div>
-        )}
       </div>
 
       {/* Info adicional */}
