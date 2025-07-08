@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -83,6 +84,7 @@ const TukiChat: React.FC = () => {
   const [validationError, setValidationError] = useState<string | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [showWorking, setShowWorking] = useState(false);
+
   useEffect(() => {
     // Forzar reinicio completo SIEMPRE
     console.log('🔄 Reiniciando onboarding completamente...');
@@ -111,53 +113,37 @@ const TukiChat: React.FC = () => {
     }, 800);
   }, []); // Sin dependencias para que se ejecute solo al montar
 
-cconst startOnboarding = () => {
-  console.log('✨ Iniciando conversación con Tuki...');
-  const welcomeMessage: Message = {
-    id: 'welcome-' + Date.now() + '-' + Math.random(),
-    text: '¡Hola! 👋 Soy Tuki, tu asistente personal. Te ayudaré 24/7 a crear campañas efectivas de marketing digital para tu negocio. ¿Comenzamos?',
-    isBot: true,
-    timestamp: new Date()
-  };
+  const startOnboarding = () => {
+    console.log('✨ Iniciando conversación con Tuki...');
+    const welcomeMessage: Message = {
+      id: 'welcome-' + Date.now() + '-' + Math.random(),
+      text: '¡Hola! 👋 Soy Tuki, tu asistente personal. Te ayudaré 24/7 a crear campañas efectivas de marketing digital para tu negocio. ¿Comenzamos?',
+      isBot: true,
+      timestamp: new Date()
+    };
 
-  setMessages([welcomeMessage]);
-  setHasStarted(true);
+    setMessages([welcomeMessage]);
+    setHasStarted(true);
 
-  // 1. Espera 2 segundos, luego muestra "Trabajando para tu negocio"
-  setTimeout(() => {
-    setShowWorking(true);
-
-    // 2. Espera 3 segundos, luego oculta el mensaje y muestra la primera pregunta
+    // 1. Espera 2 segundos, luego muestra "Trabajando para tu negocio"
     setTimeout(() => {
-      setShowWorking(false);
-      setIsTyping(true);
+      setShowWorking(true);
 
+      // 2. Espera 3 segundos, luego oculta el mensaje y muestra la primera pregunta
       setTimeout(() => {
-        setIsTyping(false);
-        setCurrentQuestion(0);
-        showNextQuestion(0);
-      }, 1500); // Duración del "pensando..."
+        setShowWorking(false);
+        setIsTyping(true);
 
-    }, 3000); // "Trabajando para tu negocio" visible 3s
+        setTimeout(() => {
+          setIsTyping(false);
+          setCurrentQuestion(0);
+          showNextQuestion(0);
+        }, 1500); // Duración del "pensando..."
 
-  }, 2000); // Delay entre bienvenida y "Trabajando..."
-};
+      }, 3000); // "Trabajando para tu negocio" visible 3s
 
-  setMessages([welcomeMessage]);
-  setHasStarted(true);
-
-  // Simular que Tuki está pensando 1.5s antes de la primera pregunta
-  setTimeout(() => {
-    setIsTyping(true);
-
-    setTimeout(() => {
-      setIsTyping(false);
-      setCurrentQuestion(0);
-      showNextQuestion(0);
-    }, 1500); // Duración del "pensando..."
-    
-  }, 2000); // Delay entre bienvenida y "pensando..."
-};
+    }, 2000); // Delay entre bienvenida y "Trabajando..."
+  };
 
   useEffect(() => {
     scrollToBottom();
@@ -470,15 +456,15 @@ cconst startOnboarding = () => {
             <ChatMessage key={message.id} message={message} />
           ))}
           {showWorking && (
-  <div className="flex items-center gap-3 px-4 py-2">
-    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-      <span className="text-sm">🤖</span>
-    </div>
-    <span style={{ fontWeight: 'bold', color: '#2563eb' }}>
-      Trabajando para tu negocio
-    </span>
-  </div>
-)}
+            <div className="flex items-center gap-3 px-4 py-2">
+              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                <span className="text-sm">🤖</span>
+              </div>
+              <span style={{ fontWeight: 'bold', color: '#2563eb' }}>
+                Trabajando para tu negocio
+              </span>
+            </div>
+          )}
           {isTyping && (
             <div className="flex items-center gap-3 px-4 py-2 text-gray-600">
               <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
