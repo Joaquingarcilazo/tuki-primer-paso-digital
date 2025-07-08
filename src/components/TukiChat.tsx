@@ -151,7 +151,7 @@ const TukiChat: React.FC = () => {
     
     setHasStarted(true);
 
-    // Después de 3 segundos, ocultar el saludo inicial y mostrar el mensaje de bienvenida
+    // Después de 2 segundos, ocultar el saludo inicial y mostrar el mensaje de bienvenida
     setTimeout(() => {
       setShowInitialGreeting(false);
       
