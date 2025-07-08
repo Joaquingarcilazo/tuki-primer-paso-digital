@@ -7,6 +7,7 @@ import { Send, Edit3, Sparkles } from 'lucide-react';
 import ChatMessage from './ChatMessage';
 import OnboardingSummary from './OnboardingSummary';
 import { validateResponse } from '../utils/responseValidator';
+import { useAudioNotification } from '../hooks/useAudioNotification';
 
 interface Message {
   id: string;
@@ -110,6 +111,9 @@ const TukiChat: React.FC = () => {
   const [showQuestionOptions, setShowQuestionOptions] = useState(false);
   const [showInitialGreeting, setShowInitialGreeting] = useState(true);
 
+  // Hook para notificaciones de audio
+  const { playTukiNotification } = useAudioNotification();
+
   useEffect(() => {
     // Forzar reinicio completo SIEMPRE
     console.log('🔄 Reiniciando onboarding completamente...');
@@ -163,6 +167,11 @@ const TukiChat: React.FC = () => {
       };
 
       setMessages([welcomeMessage]);
+      
+      // Reproducir sonido para el mensaje de bienvenida
+      setTimeout(() => {
+        playTukiNotification();
+      }, 100);
 
       // Espera 2 segundos más, luego muestra "Trabajando para tu negocio"
       setTimeout(() => {
@@ -211,6 +220,9 @@ const TukiChat: React.FC = () => {
         setIsTyping(false);
         setValidationError(null);
         
+        // Reproducir sonido cuando aparece la pregunta
+        playTukiNotification();
+        
         // Mostrar opciones después de un delay más largo para asegurar que la pregunta sea visible
         setTimeout(() => {
           setShowQuestionOptions(true);
@@ -248,6 +260,9 @@ const TukiChat: React.FC = () => {
       };
       setMessages(prev => [...prev, confirmationMessage]);
       setIsTyping(false);
+      
+      // Reproducir sonido para la confirmación
+      playTukiNotification();
     }, 1500);
   };
 
@@ -308,6 +323,9 @@ const TukiChat: React.FC = () => {
       setMessages(prev => [...prev, errorMsg]);
       setIsTyping(false);
       setValidationError(errorMessage);
+      
+      // Reproducir sonido para errores de validación
+      playTukiNotification();
     }, 1000);
   };
 
@@ -548,6 +566,9 @@ const TukiChat: React.FC = () => {
       setMessages(prev => [...prev, completionMessage]);
       setIsTyping(false);
       
+      // Reproducir sonido para el mensaje de finalización
+      playTukiNotification();
+      
       // Guardar en localStorage
       localStorage.setItem('tukiUserData', JSON.stringify(finalUserData));
       
@@ -572,6 +593,11 @@ const TukiChat: React.FC = () => {
     };
     
     setMessages([editMessage]);
+    
+    // Reproducir sonido para el modo edición
+    setTimeout(() => {
+      playTukiNotification();
+    }, 100);
   };
 
   const handleEditQuestion = (questionIndex: number) => {
