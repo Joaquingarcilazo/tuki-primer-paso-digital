@@ -401,15 +401,6 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
                   Ver rendimiento económico
                 </Button>
               )}
-              
-              <Button
-                onClick={handleEditBriefing}
-                variant="outline"
-                className="border-2 border-gray-300 hover:border-gray-400 px-8 py-3 text-lg font-semibold"
-              >
-                <Edit3 className="w-5 h-5 mr-2" />
-                Editar campaña
-              </Button>
             </div>
           </div>
         </div>
