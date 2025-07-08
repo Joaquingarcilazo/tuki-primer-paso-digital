@@ -40,19 +40,12 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
   const [publishedSuccessfully, setPublishedSuccessfully] = useState(false);
   const [showEditBriefing, setShowEditBriefing] = useState(false);
 
-  // Imágenes representativas para los diferentes tipos de negocio
+  // Imágenes específicas para cada tipo de negocio
   const businessImages = [
-    'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&h=300&fit=crop', // Ropa deportiva
-    'https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=400&h=300&fit=crop', // Estudio de arquitectura
-    'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop', // Fabricación de muebles
-    'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop'  // Gimnasio
-  ];
-
-  const businessLabels = [
-    'Ropa Deportiva',
-    'Estudio de Arquitectura', 
-    'Fabricación de Muebles',
-    'Gimnasio'
+    'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300&fit=crop', // Frente de tienda de ropa deportiva
+    'https://images.unsplash.com/photo-1503387837-b154d5074bd2?w=400&h=300&fit=crop', // Personas dibujando planos de arquitectura
+    'https://images.unsplash.com/photo-1565008447742-97f6f38c985c?w=400&h=300&fit=crop', // Fábrica de muebles
+    'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop'  // Interior de gimnasio con gente ejercitándose
   ];
 
   // Función para obtener la imagen correspondiente según el ID
@@ -60,7 +53,7 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
     const index = parseInt(imageId.split('-')[1]) - 1;
     return {
       url: businessImages[index] || businessImages[0],
-      label: businessLabels[index] || businessLabels[0]
+      alt: `Opción ${index + 1}`
     };
   };
 
@@ -298,14 +291,9 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
                       <div key={index} className="w-full h-20 relative rounded-lg overflow-hidden shadow-sm">
                         <img
                           src={imageData.url}
-                          alt={imageData.label}
+                          alt={imageData.alt}
                           className="w-full h-full object-cover"
                         />
-                        <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-center py-1">
-                          <span className="text-xs font-medium">
-                            {imageData.label}
-                          </span>
-                        </div>
                       </div>
                     );
                   })}
