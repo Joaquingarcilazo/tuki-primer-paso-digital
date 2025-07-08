@@ -490,7 +490,7 @@ const startOnboarding = () => {
               </div>
             ) : currentQuestionData.type === 'multiple' ? (
               <>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
                   {currentQuestionData.options?.map((option) => {
                     const isSelected = currentQuestionData.id === 'clienteIdeal' 
                       ? userData.clienteIdeal.split(', ').includes(option)
@@ -501,7 +501,7 @@ const startOnboarding = () => {
                         key={option}
                         variant={isSelected ? "default" : "outline"}
                         onClick={() => handleMultipleSelect(option)}
-                        className="text-sm"
+                        className="text-sm whitespace-normal min-h-[44px] py-2 px-3 text-left justify-start"
                       >
                         {option}
                       </Button>
