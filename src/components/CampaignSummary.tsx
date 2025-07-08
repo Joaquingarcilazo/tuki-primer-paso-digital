@@ -196,7 +196,7 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-6xl mx-auto space-y-6">
       {/* Header */}
       <div className="flex items-center space-x-4">
         <Button
@@ -217,142 +217,159 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
         </div>
       </div>
 
-      {/* Campaign Summary Card */}
-      <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-0 p-8">
-        <div className="space-y-8">
-          {/* Título del anuncio */}
-          <div className="space-y-3">
-            <div className="flex items-center space-x-2">
-              <span className="text-2xl">📣</span>
-              <h3 className="text-lg font-semibold text-gray-800">Título del anuncio</h3>
-            </div>
-            <div className="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
-              <p className="text-gray-800 font-medium text-lg">{campaignWithImages.titulo}</p>
-            </div>
-          </div>
-
-          {/* Texto del anuncio */}
-          <div className="space-y-3">
-            <div className="flex items-center space-x-2">
-              <span className="text-2xl">📝</span>
-              <h3 className="text-lg font-semibold text-gray-800">Texto del anuncio</h3>
-            </div>
-            <div className="bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
-              <p className="text-gray-700 leading-relaxed">{campaignWithImages.texto}</p>
-            </div>
-          </div>
-
-          {/* Imágenes generadas */}
-          {campaignWithImages.imagenes && campaignWithImages.imagenes.length > 0 && (
+      <div className="grid lg:grid-cols-2 gap-6">
+        {/* Campaign Summary Card */}
+        <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-0 p-8">
+          <div className="space-y-8">
+            {/* Título del anuncio */}
             <div className="space-y-3">
               <div className="flex items-center space-x-2">
-                <span className="text-2xl">🖼️</span>
-                <h3 className="text-lg font-semibold text-gray-800">Imágenes de la campaña</h3>
+                <span className="text-2xl">📣</span>
+                <h3 className="text-lg font-semibold text-gray-800">Título del anuncio</h3>
               </div>
-              <div className="bg-pink-50 rounded-lg p-4 border-l-4 border-pink-500">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {campaignWithImages.imagenes.map((imageId, index) => {
-                    const imageData = getImageForId(imageId);
-                    return (
-                      <div key={index} className="w-full h-20 relative rounded-lg overflow-hidden shadow-sm">
-                        <img
-                          src={imageData.url}
-                          alt={imageData.alt}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    );
-                  })}
+              <div className="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
+                <p className="text-gray-800 font-medium text-lg">{campaignWithImages.titulo}</p>
+              </div>
+            </div>
+
+            {/* Texto del anuncio */}
+            <div className="space-y-3">
+              <div className="flex items-center space-x-2">
+                <span className="text-2xl">📝</span>
+                <h3 className="text-lg font-semibold text-gray-800">Texto del anuncio</h3>
+              </div>
+              <div className="bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
+                <p className="text-gray-700 leading-relaxed">{campaignWithImages.texto}</p>
+              </div>
+            </div>
+
+            {/* Imágenes generadas */}
+            {campaignWithImages.imagenes && campaignWithImages.imagenes.length > 0 && (
+              <div className="space-y-3">
+                <div className="flex items-center space-x-2">
+                  <span className="text-2xl">🖼️</span>
+                  <h3 className="text-lg font-semibold text-gray-800">Imágenes de la campaña</h3>
+                </div>
+                <div className="bg-pink-50 rounded-lg p-4 border-l-4 border-pink-500">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {campaignWithImages.imagenes.map((imageId, index) => {
+                      const imageData = getImageForId(imageId);
+                      return (
+                        <div key={index} className="w-full h-20 relative rounded-lg overflow-hidden shadow-sm">
+                          <img
+                            src={imageData.url}
+                            alt={imageData.alt}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Grid de detalles */}
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Público objetivo */}
+              <div className="space-y-3">
+                <div className="flex items-center space-x-2">
+                  <span className="text-2xl">🎯</span>
+                  <h3 className="text-lg font-semibold text-gray-800">Público objetivo</h3>
+                </div>
+                <div className="bg-purple-50 rounded-lg p-4">
+                  <p className="text-gray-700">{userData.clienteIdeal}</p>
+                </div>
+              </div>
+
+              {/* Canal */}
+              <div className="space-y-3">
+                <div className="flex items-center space-x-2">
+                  <span className="text-2xl">🛰️</span>
+                  <h3 className="text-lg font-semibold text-gray-800">Canal</h3>
+                </div>
+                <div className="bg-orange-50 rounded-lg p-4">
+                  <p className="text-gray-700 font-medium">{campaignWithImages.canal}</p>
+                </div>
+              </div>
+
+              {/* Presupuesto */}
+              <div className="space-y-3">
+                <div className="flex items-center space-x-2">
+                  <span className="text-2xl">💰</span>
+                  <h3 className="text-lg font-semibold text-gray-800">Presupuesto sugerido</h3>
+                </div>
+                <div className="bg-yellow-50 rounded-lg p-4">
+                  <p className="text-gray-700 font-medium">{campaignWithImages.presupuesto}</p>
+                </div>
+              </div>
+
+              {/* Duración */}
+              <div className="space-y-3">
+                <div className="flex items-center space-x-2">
+                  <span className="text-2xl">🗓️</span>
+                  <h3 className="text-lg font-semibold text-gray-800">Duración sugerida</h3>
+                </div>
+                <div className="bg-indigo-50 rounded-lg p-4">
+                  <p className="text-gray-700 font-medium">{campaignWithImages.duracion}</p>
                 </div>
               </div>
             </div>
-          )}
 
-          {/* Grid de detalles */}
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* Público objetivo */}
-            <div className="space-y-3">
-              <div className="flex items-center space-x-2">
-                <span className="text-2xl">🎯</span>
-                <h3 className="text-lg font-semibold text-gray-800">Público objetivo</h3>
-              </div>
-              <div className="bg-purple-50 rounded-lg p-4">
-                <p className="text-gray-700">{userData.clienteIdeal}</p>
-              </div>
-            </div>
-
-            {/* Canal */}
-            <div className="space-y-3">
-              <div className="flex items-center space-x-2">
-                <span className="text-2xl">🛰️</span>
-                <h3 className="text-lg font-semibold text-gray-800">Canal</h3>
-              </div>
-              <div className="bg-orange-50 rounded-lg p-4">
-                <p className="text-gray-700 font-medium">{campaignWithImages.canal}</p>
-              </div>
-            </div>
-
-            {/* Presupuesto */}
-            <div className="space-y-3">
-              <div className="flex items-center space-x-2">
-                <span className="text-2xl">💰</span>
-                <h3 className="text-lg font-semibold text-gray-800">Presupuesto sugerido</h3>
-              </div>
-              <div className="bg-yellow-50 rounded-lg p-4">
-                <p className="text-gray-700 font-medium">{campaignWithImages.presupuesto}</p>
-              </div>
-            </div>
-
-            {/* Duración */}
-            <div className="space-y-3">
-              <div className="flex items-center space-x-2">
-                <span className="text-2xl">🗓️</span>
-                <h3 className="text-lg font-semibold text-gray-800">Duración sugerida</h3>
-              </div>
-              <div className="bg-indigo-50 rounded-lg p-4">
-                <p className="text-gray-700 font-medium">{campaignWithImages.duracion}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="border-t pt-8">
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              {/* Mostrar botón de generar imágenes si no hay imágenes */}
-              {!campaignWithImages.imagenes || campaignWithImages.imagenes.length === 0 ? (
-                <Button
-                  onClick={handleGenerateImages}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
-                >
-                  <Image className="w-5 h-5 mr-2" />
-                  Generar imágenes
-                </Button>
-              ) : (
-                // Mostrar todas las acciones después de tener imágenes
-                <>
+            {/* Action Buttons */}
+            <div className="border-t pt-8">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                {/* Mostrar botón de generar imágenes si no hay imágenes */}
+                {!campaignWithImages.imagenes || campaignWithImages.imagenes.length === 0 ? (
                   <Button
                     onClick={handleGenerateImages}
-                    variant="outline"
-                    className="border-2 border-purple-300 hover:border-purple-400 px-8 py-3 text-lg font-semibold"
+                    className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
                   >
                     <Image className="w-5 h-5 mr-2" />
-                    Cambiar imágenes
+                    Generar imágenes
                   </Button>
+                ) : (
+                  // Mostrar todas las acciones después de tener imágenes
+                  <>
+                    <Button
+                      onClick={handleGenerateImages}
+                      variant="outline"
+                      className="border-2 border-purple-300 hover:border-purple-400 px-8 py-3 text-lg font-semibold"
+                    >
+                      <Image className="w-5 h-5 mr-2" />
+                      Cambiar imágenes
+                    </Button>
 
-                  <Button
-                    onClick={handlePublishCampaign}
-                    disabled={isPublishing}
-                    className="bg-gradient-to-r from-red-400 to-red-500 hover:from-red-500 hover:to-red-600 text-white px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50"
-                  >
-                    <Rocket className="w-5 h-5 mr-2" />
-                    {isPublishing ? 'Publicando...' : 'Publicar en Instagram'}
-                  </Button>
-                </>
-              )}
+                    <Button
+                      onClick={handlePublishCampaign}
+                      disabled={isPublishing}
+                      className="bg-gradient-to-r from-red-400 to-red-500 hover:from-red-500 hover:to-red-600 text-white px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50"
+                    >
+                      <Rocket className="w-5 h-5 mr-2" />
+                      {isPublishing ? 'Publicando...' : 'Publicar en Instagram'}
+                    </Button>
+                  </>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      </Card>
+        </Card>
+
+        {/* Instagram Preview - Solo mostrar si hay imágenes */}
+        {campaignWithImages.imagenes && campaignWithImages.imagenes.length > 0 && (
+          <div className="space-y-4">
+            <h3 className="text-xl font-bold text-gray-800 text-center">
+              📱 Preview de Instagram
+            </h3>
+            <InstagramPreview
+              caption={campaignWithImages.texto}
+              imageUrl={getImageForId(campaignWithImages.imagenes[0]).url}
+              hashtags={['#emprendimiento', '#argentina', '#negocio']}
+              accountName={userData.productoServicio.split(' ')[0].toLowerCase()}
+            />
+          </div>
+        )}
+      </div>
 
       {/* Info adicional */}
       <div className="text-center text-sm text-gray-500">
