@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -266,14 +265,56 @@ const startOnboarding = () => {
   };
 
   const handleMultipleSelect = (option: string) => {
-    const updatedRedesSociales = userData.redesSociales.includes(option) 
-      ? userData.redesSociales.filter(item => item !== option)
-      : [...userData.redesSociales, option];
+    const currentQuestionId = questions[currentQuestion].id;
     
-    setUserData(prev => ({
-      ...prev,
-      redesSociales: updatedRedesSociales
-    }));
+    if (currentQuestionId === 'clienteIdeal') {
+      // Manejar clienteIdeal como string (las opciones seleccionadas se joinean)
+      const currentSelections = userData.clienteIdeal.split(', ').filter(item => item.length > 0);
+      const updatedSelections = currentSelections.includes(option) 
+        ? currentSelections.filter(item => item !== option)
+        : [...currentSelections, option];
+      
+      setUserData(prev => ({
+        ...prev,
+        clienteIdeal: updatedSelections.join(', ')
+      }));
+    } else if (currentQuestionId === 'redesSociales') {
+      // Manejar redesSociales como array
+      const updatedRedesSociales = userData.redesSociales.includes(option) 
+        ? userData.redesSociales.filter(item => item !== option)
+        : [...userData.redesSociales, option];
+      
+      setUserData(prev => ({
+        ...prev,
+        redesSociales: updatedRedesSociales
+      }));
+    }
+  };
+
+  const completeClienteIdeal = () => {
+    const selectedOptions = userData.clienteIdeal.length > 0 
+      ? userData.clienteIdeal
+      : 'No especificado';
+    
+    const userMessage: Message = {
+      id: Date.now().toString() + '-' + Math.random(),
+      text: selectedOptions,
+      isBot: false,
+      timestamp: new Date()
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    
+    const nextQuestion = currentQuestion + 1;
+    setCurrentQuestion(nextQuestion);
+
+    setTimeout(() => {
+      if (nextQuestion < questions.length) {
+        showNextQuestion(nextQuestion);
+      } else {
+        completeOnboarding(userData);
+      }
+    }, 1000);
   };
 
   const completeRedesSociales = () => {
@@ -396,19 +437,25 @@ const startOnboarding = () => {
             ) : currentQuestionData.type === 'multiple' ? (
               <>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-4">
-                  {currentQuestionData.options?.map((option) => (
-                    <Button
-                      key={option}
-                      variant={userData.redesSociales.includes(option) ? "default" : "outline"}
-                      onClick={() => handleMultipleSelect(option)}
-                      className="text-sm"
-                    >
-                      {option}
-                    </Button>
-                  ))}
+                  {currentQuestionData.options?.map((option) => {
+                    const isSelected = currentQuestionData.id === 'clienteIdeal' 
+                      ? userData.clienteIdeal.split(', ').includes(option)
+                      : userData.redesSociales.includes(option);
+                    
+                    return (
+                      <Button
+                        key={option}
+                        variant={isSelected ? "default" : "outline"}
+                        onClick={() => handleMultipleSelect(option)}
+                        className="text-sm"
+                      >
+                        {option}
+                      </Button>
+                    );
+                  })}
                 </div>
                 <Button 
-                  onClick={completeRedesSociales}
+                  onClick={currentQuestionData.id === 'clienteIdeal' ? completeClienteIdeal : completeRedesSociales}
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white"
                 >
                   Continuar
