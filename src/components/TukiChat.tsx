@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -201,10 +202,14 @@ const TukiChat: React.FC = () => {
         setIsTyping(false);
         setValidationError(null);
         
-        // Mostrar opciones después de un pequeño delay
+        // Mostrar opciones después de un delay más largo para asegurar que la pregunta sea visible
         setTimeout(() => {
           setShowQuestionOptions(true);
-        }, 500);
+          // Hacer scroll después de mostrar las opciones para asegurar visibilidad
+          setTimeout(() => {
+            scrollToBottom();
+          }, 100);
+        }, 2000); // Aumentado de 500ms a 2000ms
       }
     }, 1500);
   };
@@ -672,6 +677,9 @@ const TukiChat: React.FC = () => {
               </div>
             </div>
           )}
+          
+          {/* Espacio adicional para asegurar que las opciones no tapen el último mensaje */}
+          {showQuestionOptions && <div className="h-4"></div>}
           
           <div ref={messagesEndRef} />
         </div>
