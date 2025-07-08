@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Edit3, Rocket, Target, DollarSign, Calendar, Radio, Image, BarChart3 } from 'lucide-react';
 import { Campaign, UserData } from '../types/campaign';
-import { getProductImage } from '@/services/ai';
-import { isImageRelevant } from '@/helpers/relevance';
 import CampaignImageGenerator from './CampaignImageGenerator';
 import CampaignDashboard from './CampaignDashboard';
 import { toast } from '@/components/ui/use-toast';
@@ -36,24 +35,11 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
 }) => {
   const [showImageGenerator, setShowImageGenerator] = useState(false);
   const [campaignWithImages, setCampaignWithImages] = useState<Campaign>(campaign);
-  const [imgUrl, setImgUrl] = useState<string>('');
   const [showInstagramPreview, setShowInstagramPreview] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
   const [publishedSuccessfully, setPublishedSuccessfully] = useState(false);
   const [showEditBriefing, setShowEditBriefing] = useState(false);
-
-  useEffect(() => {
-    (async () => {
-      const url = await getProductImage(userData.productoServicio);
-      if (isImageRelevant(url, userData.productoServicio)) {
-        setImgUrl(url);
-      } else {
-        // Fallback: logo o imagen por defecto
-        setImgUrl('/images/placeholder-product.jpg');
-      }
-    })();
-  }, [userData.productoServicio]);
 
   const handleGenerateImages = () => {
     setShowImageGenerator(true);
@@ -68,8 +54,8 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
     setIsPublishing(true);
     
     try {
-      // Usar la imagen generada automáticamente o la primera de las imágenes de campaña
-      const imageToUse = imgUrl || (campaignWithImages.imagenes?.[0]);
+      // Verificar si hay imágenes disponibles
+      const imageToUse = campaignWithImages.imagenes?.[0];
       
       if (!imageToUse) {
         toast({
@@ -235,7 +221,7 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
             </h3>
             <InstagramPreview
               caption={campaignWithImages.texto}
-              imageUrl={imgUrl || campaignWithImages.imagenes?.[0] || ''}
+              imageUrl={campaignWithImages.imagenes?.[0] || ''}
               hashtags={['#emprendimiento', '#argentina', '#negocio']}
               accountName={userData.productoServicio.toLowerCase().replace(/\s+/g, '_')}
             />
@@ -273,23 +259,6 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
               <p className="text-gray-700 leading-relaxed">{campaignWithImages.texto}</p>
             </div>
           </div>
-
-          {/* Auto-generated product image */}
-          {imgUrl && (
-            <div className="space-y-3">
-              <div className="flex items-center space-x-2">
-                <span className="text-2xl">🤖</span>
-                <h3 className="text-lg font-semibold text-gray-800">Imagen del producto (generada automáticamente)</h3>
-              </div>
-              <div className="bg-cyan-50 rounded-lg p-4 border-l-4 border-cyan-500">
-                <img
-                  src={imgUrl}
-                  alt={`Imagen generada para ${userData.productoServicio}`}
-                  className="w-full max-w-md h-48 object-cover rounded-lg shadow-sm mx-auto"
-                />
-              </div>
-            </div>
-          )}
 
           {/* Imágenes generadas */}
           {campaignWithImages.imagenes && campaignWithImages.imagenes.length > 0 && (
