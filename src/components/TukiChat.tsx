@@ -1,9 +1,10 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Send, Edit3, Sparkles } from 'lucide-react';
+import { Send, Edit3, Sparkles, ArrowLeft } from 'lucide-react';
 import ChatMessage from './ChatMessage';
 import OnboardingSummary from './OnboardingSummary';
 import { validateResponse } from '../utils/responseValidator';
@@ -81,6 +82,7 @@ const TukiChat: React.FC = () => {
   const [hasStarted, setHasStarted] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [validationError, setValidationError] = useState<string | null>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   useEffect(() => {
     // Forzar reinicio completo SIEMPRE
@@ -100,6 +102,7 @@ const TukiChat: React.FC = () => {
     setIsComplete(false);
     setIsTyping(false);
     setHasStarted(false);
+    setIsEditMode(false);
     
     // Iniciar el flujo inmediatamente con un timestamp único
     const timestamp = Date.now();
@@ -357,31 +360,110 @@ const startOnboarding = () => {
   };
 
   const handleEditResponses = () => {
-    console.log('🔄 Reiniciando desde editar respuestas...');
-    // Reiniciar completamente
+    console.log('📝 Iniciando modo edición...');
     setIsComplete(false);
-    setCurrentQuestion(-1);
-    setMessages([]);
-    setUserData({
-      productoServicio: '',
-      clienteIdeal: '',
-      objetivoMarketing: '',
-      redesSociales: []
-    });
-    setHasStarted(false);
+    setIsEditMode(true);
     setIsTyping(false);
-    setInputValue('');
     
-    // Reiniciar el flujo
-    setTimeout(() => {
-      startOnboarding();
-    }, 500);
+    // Mostrar mensaje de edición
+    const editMessage: Message = {
+      id: Date.now().toString() + '-' + Math.random(),
+      text: '¡Perfecto! Te voy a mostrar tus respuestas una por una para que puedas editarlas. ¿Por cuál querés empezar? 🔧',
+      isBot: true,
+      timestamp: new Date()
+    };
+    
+    setMessages([editMessage]);
+  };
+
+  const handleEditQuestion = (questionIndex: number) => {
+    console.log(`✏️ Editando pregunta ${questionIndex}`);
+    setCurrentQuestion(questionIndex);
+    setIsEditMode(false);
+    setValidationError(null);
+    
+    // Pre-cargar la respuesta actual en el input si es de tipo texto
+    const currentAnswer = userData[questions[questionIndex].id as keyof UserData];
+    if (questions[questionIndex].type === 'textarea' && typeof currentAnswer === 'string') {
+      setInputValue(currentAnswer);
+    }
+    
+    // Mostrar la pregunta
+    showNextQuestion(questionIndex);
+  };
+
+  const handleGoBack = () => {
+    if (currentQuestion > 0) {
+      setCurrentQuestion(currentQuestion - 1);
+      showNextQuestion(currentQuestion - 1);
+    } else {
+      // Si estamos en la primera pregunta, volver al modo edición
+      setIsEditMode(true);
+      setCurrentQuestion(-1);
+      handleEditResponses();
+    }
   };
 
   const currentQuestionData = currentQuestion >= 0 ? questions[currentQuestion] : null;
 
   if (isComplete) {
     return <OnboardingSummary userData={userData} onEdit={handleEditResponses} />;
+  }
+
+  // Mostrar opciones de edición
+  if (isEditMode) {
+    return (
+      <Card className="max-w-4xl mx-auto bg-white/80 backdrop-blur-sm shadow-xl border-0">
+        <div className="p-8">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+              Editá tus respuestas ✏️
+            </h2>
+            <p className="text-gray-600">
+              Hacé click en cualquier pregunta para modificar tu respuesta
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {questions.map((question, index) => {
+              const answerKey = question.id as keyof UserData;
+              const answer = userData[answerKey];
+              const displayAnswer = Array.isArray(answer) ? answer.join(', ') : answer || 'Sin respuesta';
+              
+              return (
+                <div 
+                  key={question.id}
+                  className="border rounded-lg p-4 hover:bg-gray-50 cursor-pointer transition-colors"
+                  onClick={() => handleEditQuestion(index)}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h3 className="font-medium text-gray-800 mb-2">
+                        {index + 1}. {question.text.split('😊')[0].split('🎯')[0].split('🚀')[0].split('📱')[0].trim()}
+                      </h3>
+                      <p className="text-gray-600 bg-gray-100 rounded p-2">
+                        <strong>Tu respuesta:</strong> {displayAnswer}
+                      </p>
+                    </div>
+                    <Edit3 className="w-5 h-5 text-blue-600 ml-4 flex-shrink-0" />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="mt-8 text-center">
+            <Button
+              onClick={() => setIsComplete(true)}
+              className="bg-green-600 hover:bg-green-700 text-white px-8 py-3"
+            >
+              <Sparkles className="w-5 h-5 mr-2" />
+              Continuar con estas respuestas
+            </Button>
+          </div>
+        </div>
+      </Card>
+    );
   }
 
   return (
@@ -415,6 +497,21 @@ const startOnboarding = () => {
         {/* Input Area */}
         {currentQuestion >= 0 && currentQuestion < questions.length && !isTyping && currentQuestionData && (
           <div className="border-t bg-gray-50/50 p-4">
+            {/* Botón para volver atrás durante la edición */}
+            {currentQuestion > 0 && (
+              <div className="mb-4">
+                <Button
+                  onClick={handleGoBack}
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center space-x-2"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  <span>Volver a la pregunta anterior</span>
+                </Button>
+              </div>
+            )}
+
             {validationError && (
               <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-md">
                 <p className="text-sm text-red-600">💡 Tip: {validationError}</p>
