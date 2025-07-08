@@ -108,6 +108,7 @@ const TukiChat: React.FC = () => {
   const [showWorking, setShowWorking] = useState(false);
   const [showClienteIdealSummary, setShowClienteIdealSummary] = useState(false);
   const [showQuestionOptions, setShowQuestionOptions] = useState(false);
+  const [showInitialGreeting, setShowInitialGreeting] = useState(true);
 
   useEffect(() => {
     // Forzar reinicio completo SIEMPRE
@@ -135,6 +136,7 @@ const TukiChat: React.FC = () => {
     setHasStarted(false);
     setIsEditMode(false);
     setShowQuestionOptions(false);
+    setShowInitialGreeting(true);
     
     // Iniciar el flujo inmediatamente con un timestamp único
     const timestamp = Date.now();
@@ -147,19 +149,12 @@ const TukiChat: React.FC = () => {
   const startOnboarding = () => {
     console.log('✨ Iniciando conversación con Tuki...');
     
-    // 1. Primer mensaje: Saludo de Tuki
-    const greetingMessage: Message = {
-      id: 'greeting-' + Date.now() + '-' + Math.random(),
-      text: '¡Hola! Soy Tuki 👋',
-      isBot: true,
-      timestamp: new Date()
-    };
-
-    setMessages([greetingMessage]);
     setHasStarted(true);
 
-    // 2. Después de 2 segundos, mostrar el mensaje de bienvenida
+    // Después de 3 segundos, ocultar el saludo inicial y mostrar el mensaje de bienvenida
     setTimeout(() => {
+      setShowInitialGreeting(false);
+      
       const welcomeMessage: Message = {
         id: 'welcome-' + Date.now() + '-' + Math.random(),
         text: 'Te ayudaré 24/7 a crear campañas efectivas de marketing digital para tu negocio. ¿Comenzamos?',
@@ -167,13 +162,13 @@ const TukiChat: React.FC = () => {
         timestamp: new Date()
       };
 
-      setMessages(prev => [...prev, welcomeMessage]);
+      setMessages([welcomeMessage]);
 
-      // 3. Espera 2 segundos más, luego muestra "Trabajando para tu negocio"
+      // Espera 2 segundos más, luego muestra "Trabajando para tu negocio"
       setTimeout(() => {
         setShowWorking(true);
 
-        // 4. Espera 3 segundos, luego oculta el mensaje y muestra la primera pregunta
+        // Espera 3 segundos, luego oculta el mensaje y muestra la primera pregunta
         setTimeout(() => {
           setShowWorking(false);
           setIsTyping(true);
@@ -188,7 +183,7 @@ const TukiChat: React.FC = () => {
 
       }, 2000); // Delay entre bienvenida y "Trabajando..."
 
-    }, 2000); // Delay entre saludo y bienvenida
+    }, 3000); // Delay para mostrar el saludo inicial por 3 segundos
   };
 
   useEffect(() => {
@@ -652,6 +647,21 @@ const TukiChat: React.FC = () => {
               <Sparkles className="w-5 h-5 mr-2" />
               Continuar con estas respuestas
             </Button>
+          </div>
+        </div>
+      </Card>
+    );
+  }
+
+  // Mostrar saludo inicial fijo y grande
+  if (showInitialGreeting) {
+    return (
+      <Card className="max-w-4xl mx-auto bg-white/80 backdrop-blur-sm shadow-xl border-0">
+        <div className="h-[600px] flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-6xl font-bold text-blue-600 mb-4">
+              ¡Hola! Soy Tuki 👋
+            </h1>
           </div>
         </div>
       </Card>
