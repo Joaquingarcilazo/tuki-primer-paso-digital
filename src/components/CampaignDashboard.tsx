@@ -151,17 +151,17 @@ const CampaignDashboard: React.FC = () => {
 
       {/* Call to Action Button */}
       <Card className="p-8 bg-gradient-to-r from-blue-100 to-cyan-100 border border-blue-200">
-        <div className="text-center">
+        <div className="text-center max-w-2xl mx-auto">
           <h3 className="text-2xl font-bold text-gray-800 mb-4">
             🚀 Esta campaña ya despegó
           </h3>
-          <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+          <p className="text-gray-600 mb-6">
             Ahora que me probaste gratis estás a un click de que tu negocio siga creciendo.
           </p>
           <Button 
             onClick={handleTryFree}
             size="lg" 
-            className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-8 py-3 text-lg font-semibold"
+            className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-8 py-3 text-lg font-semibold w-full max-w-md"
           >
             Seguime, ahora soy Tuki PRO
             <ArrowRight className="ml-2 w-5 h-5" />
