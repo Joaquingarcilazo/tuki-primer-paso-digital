@@ -9,7 +9,7 @@ import { TrendingUp, Users, DollarSign, Eye, MousePointer, ShoppingCart, ArrowRi
 // Función para manejar el botón de Tuki
 const handleTryFree = () => {
   // Reemplaza esta URL con la URL de tu formulario de Google
-  const googleFormUrl = 'https://forms.gle/TU_GOOGLE_FORM_ID';
+  const googleFormUrl = 'https://forms.gle/FgSmcEL2c2HBopz49';
   window.open(googleFormUrl, '_blank');
 };
 
