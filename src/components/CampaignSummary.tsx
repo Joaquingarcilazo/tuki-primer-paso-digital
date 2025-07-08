@@ -1,8 +1,7 @@
-
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Edit3, Rocket, Target, DollarSign, Calendar, Radio, Image, BarChart3, Sparkles, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Edit3, Rocket, Target, DollarSign, Calendar, Radio, Image, BarChart3, Sparkles, CheckCircle, Hand } from 'lucide-react';
 import { Campaign, UserData } from '../types/campaign';
 import CampaignImageGenerator from './CampaignImageGenerator';
 import CampaignDashboard from './CampaignDashboard';
@@ -208,7 +207,7 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
 
         {/* Info adicional */}
         <div className="text-center text-sm text-gray-500">
-          <p>📊 Ahora podés ver en tiempo real cómo está funcionando tu campaña</p>
+          <p><Hand className="w-4 h-4 inline mr-1" /> Ahora podés ver en tiempo real cómo está funcionando tu campaña</p>
         </div>
       </div>
     );
