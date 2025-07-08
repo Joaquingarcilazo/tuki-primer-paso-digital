@@ -722,7 +722,7 @@ const TukiChat: React.FC = () => {
         <div className="h-[600px] flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-6xl font-bold text-blue-600 mb-4">
-              ¡Hola! Soy Tuki 👋
+              ¡Hola! Si ya tenés tu negocio y necesitás hacer una campaña de marketing digital seguime... Soy Tuki 👋
             </h1>
           </div>
         </div>
