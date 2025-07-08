@@ -25,6 +25,21 @@ const CampaignImageGenerator: React.FC<CampaignImageGeneratorProps> = ({
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
 
+  // Imágenes representativas para los diferentes tipos de negocio
+  const businessImages = [
+    'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&h=300&fit=crop', // Ropa deportiva
+    'https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=400&h=300&fit=crop', // Estudio de arquitectura
+    'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop', // Fabricación de muebles
+    'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop'  // Gimnasio
+  ];
+
+  const businessLabels = [
+    'Ropa Deportiva',
+    'Estudio de Arquitectura', 
+    'Fabricación de Muebles',
+    'Gimnasio'
+  ];
+
   // Generar prompt automático basado en la campaña
   const generateAutoPrompt = () => {
     return `Imagen promocional para ${userData.productoServicio}, estilo moderno y profesional, colores atractivos, alta calidad, para redes sociales`;
@@ -158,10 +173,17 @@ const CampaignImageGenerator: React.FC<CampaignImageGeneratorProps> = ({
                     }`}
                     onClick={() => toggleImageSelection(imageId)}
                   >
-                    <div className="w-full h-32 bg-gray-100 flex items-center justify-center">
-                      <span className="text-gray-600 font-medium text-lg">
-                        Opción {index + 1}
-                      </span>
+                    <div className="w-full h-32 relative">
+                      <img
+                        src={businessImages[index]}
+                        alt={businessLabels[index]}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-center py-1">
+                        <span className="text-sm font-medium">
+                          {businessLabels[index]}
+                        </span>
+                      </div>
                     </div>
                     {selectedImages.includes(imageId) && (
                       <div className="absolute inset-0 bg-blue-500 bg-opacity-20 flex items-center justify-center">

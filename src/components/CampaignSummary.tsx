@@ -40,6 +40,30 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
   const [publishedSuccessfully, setPublishedSuccessfully] = useState(false);
   const [showEditBriefing, setShowEditBriefing] = useState(false);
 
+  // Imágenes representativas para los diferentes tipos de negocio
+  const businessImages = [
+    'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&h=300&fit=crop', // Ropa deportiva
+    'https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=400&h=300&fit=crop', // Estudio de arquitectura
+    'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop', // Fabricación de muebles
+    'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop'  // Gimnasio
+  ];
+
+  const businessLabels = [
+    'Ropa Deportiva',
+    'Estudio de Arquitectura', 
+    'Fabricación de Muebles',
+    'Gimnasio'
+  ];
+
+  // Función para obtener la imagen correspondiente según el ID
+  const getImageForId = (imageId: string) => {
+    const index = parseInt(imageId.split('-')[1]) - 1;
+    return {
+      url: businessImages[index] || businessImages[0],
+      label: businessLabels[index] || businessLabels[0]
+    };
+  };
+
   const handleGenerateImages = () => {
     setShowImageGenerator(true);
   };
@@ -268,13 +292,23 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
               </div>
               <div className="bg-pink-50 rounded-lg p-4 border-l-4 border-pink-500">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {campaignWithImages.imagenes.map((imageId, index) => (
-                    <div key={index} className="w-full h-20 bg-gray-100 rounded-lg shadow-sm flex items-center justify-center">
-                      <span className="text-gray-600 font-medium text-sm">
-                        Opción {index + 1}
-                      </span>
-                    </div>
-                  ))}
+                  {campaignWithImages.imagenes.map((imageId, index) => {
+                    const imageData = getImageForId(imageId);
+                    return (
+                      <div key={index} className="w-full h-20 relative rounded-lg overflow-hidden shadow-sm">
+                        <img
+                          src={imageData.url}
+                          alt={imageData.label}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-center py-1">
+                          <span className="text-xs font-medium">
+                            {imageData.label}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
