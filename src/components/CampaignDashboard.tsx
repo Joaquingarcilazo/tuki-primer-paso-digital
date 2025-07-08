@@ -83,7 +83,7 @@ const insights: Insight[] = [
 const recommendations: string[] = [
   'Considera aumentar tu presupuesto en Instagram para maximizar el retorno.',
   'Experimenta con anuncios de video para atraer a una audiencia más amplia.',
-  'A/B test diferentes textos de anuncios para mejorar tu CTR.',
+  'Puedes realizar A/B test diferentes para mejorar tu CTR.',
 ];
 
 // Datos para el gráfico de inversión vs ingresos
@@ -275,7 +275,7 @@ const CampaignDashboard: React.FC = () => {
           </h3>
           <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
             Tuki puede ayudarte a obtener resultados similares para tu negocio. 
-            Déjanos tus datos y te contactaremos para una consulta gratuita.
+            Estás a un click de probarlo gratis.
           </p>
           <Button 
             onClick={handleTryFree}
