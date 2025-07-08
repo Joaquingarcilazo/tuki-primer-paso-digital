@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Send, Edit3, Sparkles, ArrowLeft } from 'lucide-react';
+import { Send, Edit3, Sparkles } from 'lucide-react';
 import ChatMessage from './ChatMessage';
 import OnboardingSummary from './OnboardingSummary';
 import { validateResponse } from '../utils/responseValidator';
@@ -377,18 +376,6 @@ const startOnboarding = () => {
     showNextQuestion(questionIndex);
   };
 
-  const handleGoBack = () => {
-    if (currentQuestion > 0) {
-      setCurrentQuestion(currentQuestion - 1);
-      showNextQuestion(currentQuestion - 1);
-    } else {
-      // Si estamos en la primera pregunta, volver al modo edición
-      setIsEditMode(true);
-      setCurrentQuestion(-1);
-      handleEditResponses();
-    }
-  };
-
   const currentQuestionData = currentQuestion >= 0 ? questions[currentQuestion] : null;
 
   if (isComplete) {
@@ -482,21 +469,6 @@ const startOnboarding = () => {
         {/* Input Area */}
         {currentQuestion >= 0 && currentQuestion < questions.length && !isTyping && currentQuestionData && (
           <div className="border-t bg-gray-50/50 p-4">
-            {/* Botón para volver atrás durante la edición */}
-            {currentQuestion > 0 && (
-              <div className="mb-4">
-                <Button
-                  onClick={handleGoBack}
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center space-x-2"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                  <span>Volver a la pregunta anterior</span>
-                </Button>
-              </div>
-            )}
-
             {validationError && (
               <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-md">
                 <p className="text-sm text-red-600">💡 Tip: {validationError}</p>
