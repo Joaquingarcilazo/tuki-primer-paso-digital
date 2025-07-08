@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -323,7 +322,7 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
                 <h3 className="text-lg font-semibold text-gray-800">Público objetivo</h3>
               </div>
               <div className="bg-purple-50 rounded-lg p-4">
-                <p className="text-gray-700">{campaignWithImages.publicoObjetivo}</p>
+                <p className="text-gray-700">{userData.clienteIdeal}</p>
               </div>
             </div>
 
