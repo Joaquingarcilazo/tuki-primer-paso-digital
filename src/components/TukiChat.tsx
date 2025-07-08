@@ -23,9 +23,9 @@ interface UserData {
 }
 
 interface ClienteIdealData {
-  edad: string;
-  genero: string;
-  nivelAdquisitivo: string;
+  edad: string[];
+  genero: string[];
+  nivelAdquisitivo: string[];
   caracteristicasAdicionales: string[];
 }
 
@@ -38,25 +38,25 @@ const questions = [
   },
   {
     id: 'edad',
-    text: 'Perfecto! Ahora definamos tu cliente ideal. Empecemos por la edad. ¿Qué rango de edad tiene tu público objetivo? 🎯',
-    type: 'options',
+    text: 'Perfecto! Ahora definamos tu cliente ideal. Empecemos por la edad. ¿Qué rangos de edad tiene tu público objetivo? Podés seleccionar todas las opciones que apliquen 🎯',
+    type: 'multiple',
     options: ['Jóvenes (18-30 años)', 'Adultos (30-50 años)', 'Adultos mayores (50+ años)', 'Todas las edades']
   },
   {
     id: 'genero',
-    text: '¡Excelente! Ahora, ¿a qué género está dirigido principalmente tu producto o servicio? 👥',
-    type: 'options',
-    options: ['Hombres', 'Mujeres', 'Ambos géneros']
+    text: '¡Excelente! Ahora, ¿a qué géneros está dirigido tu producto o servicio? Podés seleccionar todas las opciones que apliquen 👥',
+    type: 'multiple',
+    options: ['Hombres', 'Mujeres', 'Ambos géneros', 'No binario/Otros']
   },
   {
     id: 'nivelAdquisitivo',
-    text: 'Genial. ¿Qué nivel adquisitivo tiene tu cliente ideal? 💰',
-    type: 'options',
+    text: 'Genial. ¿Qué niveles adquisitivos tienen tus clientes ideales? Podés seleccionar todas las opciones que apliquen 💰',
+    type: 'multiple',
     options: ['Poder adquisitivo alto', 'Presupuesto moderado', 'Precio accesible', 'Todos los niveles']
   },
   {
     id: 'caracteristicasAdicionales',
-    text: 'Perfecto! Para terminar de definir tu cliente ideal, ¿qué otras características lo describen? Seleccioná todas las que apliquen 🎯',
+    text: 'Perfecto! Para terminar de definir tu cliente ideal, ¿qué otras características lo describen? Podés seleccionar todas las que apliquen 🎯',
     type: 'multiple',
     options: [
       'Familias con hijos',
@@ -77,7 +77,7 @@ const questions = [
   },
   {
     id: 'redesSociales',
-    text: '¡Última pregunta! ¿Qué canales digitales utilizás o te interesa usar para promocionar tu negocio? Seleccioná todos los que apliquen 📱',
+    text: '¡Última pregunta! ¿Qué canales digitales utilizás o te interesa usar para promocionar tu negocio? Podés seleccionar todos los que apliquen 📱',
     type: 'multiple',
     options: ['Instagram', 'Facebook', 'Google Ads', 'Email Marketing']
   }
@@ -94,9 +94,9 @@ const TukiChat: React.FC = () => {
     redesSociales: []
   });
   const [clienteIdealData, setClienteIdealData] = useState<ClienteIdealData>({
-    edad: '',
-    genero: '',
-    nivelAdquisitivo: '',
+    edad: [],
+    genero: [],
+    nivelAdquisitivo: [],
     caracteristicasAdicionales: []
   });
   const [isComplete, setIsComplete] = useState(false);
@@ -122,6 +122,12 @@ const TukiChat: React.FC = () => {
       clienteIdeal: '',
       objetivoMarketing: '',
       redesSociales: []
+    });
+    setClienteIdealData({
+      edad: [],
+      genero: [],
+      nivelAdquisitivo: [],
+      caracteristicasAdicionales: []
     });
     setIsComplete(false);
     setIsTyping(false);
@@ -196,9 +202,9 @@ const TukiChat: React.FC = () => {
 
   const buildClienteIdealString = () => {
     const parts = [];
-    if (clienteIdealData.edad) parts.push(clienteIdealData.edad);
-    if (clienteIdealData.genero && clienteIdealData.genero !== 'Ambos géneros') parts.push(clienteIdealData.genero);
-    if (clienteIdealData.nivelAdquisitivo && clienteIdealData.nivelAdquisitivo !== 'Todos los niveles') parts.push(clienteIdealData.nivelAdquisitivo);
+    if (clienteIdealData.edad.length > 0) parts.push(...clienteIdealData.edad);
+    if (clienteIdealData.genero.length > 0) parts.push(...clienteIdealData.genero);
+    if (clienteIdealData.nivelAdquisitivo.length > 0) parts.push(...clienteIdealData.nivelAdquisitivo);
     if (clienteIdealData.caracteristicasAdicionales.length > 0) {
       parts.push(...clienteIdealData.caracteristicasAdicionales);
     }
@@ -252,9 +258,9 @@ const TukiChat: React.FC = () => {
       
       // Resetear datos del cliente ideal y volver al primer paso
       setClienteIdealData({
-        edad: '',
-        genero: '',
-        nivelAdquisitivo: '',
+        edad: [],
+        genero: [],
+        nivelAdquisitivo: [],
         caracteristicasAdicionales: []
       });
       
@@ -351,20 +357,8 @@ const TukiChat: React.FC = () => {
 
     const currentQuestionId = questions[currentQuestion].id;
     
-    // Manejar selecciones del cliente ideal
-    if (currentQuestionId === 'edad') {
-      setClienteIdealData(prev => ({ ...prev, edad: option }));
-      setCurrentQuestion(2); // Ir a género
-      setTimeout(() => showNextQuestion(2), 1000);
-    } else if (currentQuestionId === 'genero') {
-      setClienteIdealData(prev => ({ ...prev, genero: option }));
-      setCurrentQuestion(3); // Ir a nivel adquisitivo
-      setTimeout(() => showNextQuestion(3), 1000);
-    } else if (currentQuestionId === 'nivelAdquisitivo') {
-      setClienteIdealData(prev => ({ ...prev, nivelAdquisitivo: option }));
-      setCurrentQuestion(4); // Ir a características adicionales
-      setTimeout(() => showNextQuestion(4), 1000);
-    } else if (currentQuestionId === 'objetivoMarketing') {
+    // Solo manejar objetivo de marketing como selección única
+    if (currentQuestionId === 'objetivoMarketing') {
       setUserData(prev => ({ ...prev, objetivoMarketing: option }));
       setCurrentQuestion(6); // Ir a redes sociales
       setTimeout(() => showNextQuestion(6), 1000);
@@ -374,7 +368,34 @@ const TukiChat: React.FC = () => {
   const handleMultipleSelect = (option: string) => {
     const currentQuestionId = questions[currentQuestion].id;
     
-    if (currentQuestionId === 'caracteristicasAdicionales') {
+    if (currentQuestionId === 'edad') {
+      const updatedSelections = clienteIdealData.edad.includes(option) 
+        ? clienteIdealData.edad.filter(item => item !== option)
+        : [...clienteIdealData.edad, option];
+      
+      setClienteIdealData(prev => ({
+        ...prev,
+        edad: updatedSelections
+      }));
+    } else if (currentQuestionId === 'genero') {
+      const updatedSelections = clienteIdealData.genero.includes(option) 
+        ? clienteIdealData.genero.filter(item => item !== option)
+        : [...clienteIdealData.genero, option];
+      
+      setClienteIdealData(prev => ({
+        ...prev,
+        genero: updatedSelections
+      }));
+    } else if (currentQuestionId === 'nivelAdquisitivo') {
+      const updatedSelections = clienteIdealData.nivelAdquisitivo.includes(option) 
+        ? clienteIdealData.nivelAdquisitivo.filter(item => item !== option)
+        : [...clienteIdealData.nivelAdquisitivo, option];
+      
+      setClienteIdealData(prev => ({
+        ...prev,
+        nivelAdquisitivo: updatedSelections
+      }));
+    } else if (currentQuestionId === 'caracteristicasAdicionales') {
       const updatedSelections = clienteIdealData.caracteristicasAdicionales.includes(option) 
         ? clienteIdealData.caracteristicasAdicionales.filter(item => item !== option)
         : [...clienteIdealData.caracteristicasAdicionales, option];
@@ -399,7 +420,55 @@ const TukiChat: React.FC = () => {
     const currentQuestionId = questions[currentQuestion].id;
     let selectedOptions = '';
     
-    if (currentQuestionId === 'caracteristicasAdicionales') {
+    if (currentQuestionId === 'edad') {
+      selectedOptions = clienteIdealData.edad.length > 0 
+        ? clienteIdealData.edad.join(', ') 
+        : 'Sin edad específica';
+        
+      const userMessage: Message = {
+        id: Date.now().toString() + '-' + Math.random(),
+        text: selectedOptions,
+        isBot: false,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, userMessage]);
+      
+      setCurrentQuestion(2); // Ir a género
+      setTimeout(() => showNextQuestion(2), 1000);
+      
+    } else if (currentQuestionId === 'genero') {
+      selectedOptions = clienteIdealData.genero.length > 0 
+        ? clienteIdealData.genero.join(', ') 
+        : 'Sin género específico';
+        
+      const userMessage: Message = {
+        id: Date.now().toString() + '-' + Math.random(),
+        text: selectedOptions,
+        isBot: false,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, userMessage]);
+      
+      setCurrentQuestion(3); // Ir a nivel adquisitivo
+      setTimeout(() => showNextQuestion(3), 1000);
+      
+    } else if (currentQuestionId === 'nivelAdquisitivo') {
+      selectedOptions = clienteIdealData.nivelAdquisitivo.length > 0 
+        ? clienteIdealData.nivelAdquisitivo.join(', ') 
+        : 'Sin nivel adquisitivo específico';
+        
+      const userMessage: Message = {
+        id: Date.now().toString() + '-' + Math.random(),
+        text: selectedOptions,
+        isBot: false,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, userMessage]);
+      
+      setCurrentQuestion(4); // Ir a características adicionales
+      setTimeout(() => showNextQuestion(4), 1000);
+      
+    } else if (currentQuestionId === 'caracteristicasAdicionales') {
       selectedOptions = clienteIdealData.caracteristicasAdicionales.length > 0 
         ? clienteIdealData.caracteristicasAdicionales.join(', ') 
         : 'Sin características adicionales';
@@ -636,9 +705,19 @@ const TukiChat: React.FC = () => {
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4 max-w-3xl mx-auto">
                   {currentQuestionData.options?.map((option) => {
-                    const isSelected = currentQuestionData.id === 'caracteristicasAdicionales' 
-                      ? clienteIdealData.caracteristicasAdicionales.includes(option)
-                      : userData.redesSociales.includes(option);
+                    let isSelected = false;
+                    
+                    if (currentQuestionData.id === 'edad') {
+                      isSelected = clienteIdealData.edad.includes(option);
+                    } else if (currentQuestionData.id === 'genero') {
+                      isSelected = clienteIdealData.genero.includes(option);
+                    } else if (currentQuestionData.id === 'nivelAdquisitivo') {
+                      isSelected = clienteIdealData.nivelAdquisitivo.includes(option);
+                    } else if (currentQuestionData.id === 'caracteristicasAdicionales') {
+                      isSelected = clienteIdealData.caracteristicasAdicionales.includes(option);
+                    } else if (currentQuestionData.id === 'redesSociales') {
+                      isSelected = userData.redesSociales.includes(option);
+                    }
                     
                     return (
                       <Button
