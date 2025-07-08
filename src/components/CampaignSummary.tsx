@@ -235,7 +235,7 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
             <h3 className="text-lg font-semibold mb-4 text-center">
-              📸 Preview de tu publicación en Instagram
+              🎉 ¡Tu publicación de Instagram ya está generando resultados!
             </h3>
             <InstagramPreview
               caption={campaignWithImages.texto}
@@ -253,18 +253,10 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
               
               <Button
                 onClick={handleViewDashboard}
-                className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white"
+                className="w-full bg-green-600 hover:bg-green-700 text-white"
               >
                 <BarChart3 className="w-4 h-4 mr-2" />
                 Ver rendimiento económico
-              </Button>
-              
-              <Button
-                onClick={handleClosePreview}
-                variant="outline"
-                className="w-full"
-              >
-                Cerrar preview
               </Button>
             </div>
           </div>
@@ -396,7 +388,7 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
                   <Button
                     onClick={handlePublishCampaign}
                     disabled={isPublishing}
-                    className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50"
+                    className="bg-gradient-to-r from-red-400 to-red-500 hover:from-red-500 hover:to-red-600 text-white px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50"
                   >
                     <Rocket className="w-5 h-5 mr-2" />
                     {isPublishing ? 'Publicando...' : 'Publicar en Instagram'}
