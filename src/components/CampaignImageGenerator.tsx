@@ -33,13 +33,13 @@ const CampaignImageGenerator: React.FC<CampaignImageGeneratorProps> = ({
   const handleGenerateImages = async () => {
     setIsGenerating(true);
     
-    // Simular generación de imágenes (aquí se integraría con una API real)
+    // Simular generación de imágenes con opciones numeradas
     setTimeout(() => {
       const mockImages = [
-        'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=400&fit=crop',
-        'https://images.unsplash.com/photo-1533750349088-cd871a92f312?w=400&h=400&fit=crop',
-        'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=400&h=400&fit=crop',
-        'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=400&fit=crop'
+        'opcion-1',
+        'opcion-2', 
+        'opcion-3',
+        'opcion-4'
       ];
       setGeneratedImages(mockImages);
       setIsGenerating(false);
@@ -148,22 +148,22 @@ const CampaignImageGenerator: React.FC<CampaignImageGeneratorProps> = ({
             </h3>
             
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {generatedImages.map((imageUrl, index) => (
+              {generatedImages.map((imageId, index) => (
                 <div key={index} className="relative group">
                   <div 
                     className={`relative cursor-pointer rounded-lg overflow-hidden border-4 transition-all ${
-                      selectedImages.includes(imageUrl) 
+                      selectedImages.includes(imageId) 
                         ? 'border-blue-500 shadow-lg' 
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
-                    onClick={() => toggleImageSelection(imageUrl)}
+                    onClick={() => toggleImageSelection(imageId)}
                   >
-                    <img
-                      src={imageUrl}
-                      alt={`Generated image ${index + 1}`}
-                      className="w-full h-32 object-cover"
-                    />
-                    {selectedImages.includes(imageUrl) && (
+                    <div className="w-full h-32 bg-gray-100 flex items-center justify-center">
+                      <span className="text-gray-600 font-medium text-lg">
+                        Opción {index + 1}
+                      </span>
+                    </div>
+                    {selectedImages.includes(imageId) && (
                       <div className="absolute inset-0 bg-blue-500 bg-opacity-20 flex items-center justify-center">
                         <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
                           <span className="text-white font-bold text-sm">✓</span>
