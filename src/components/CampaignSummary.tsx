@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Edit3, Rocket, Target, DollarSign, Calendar, Radio, Image, BarChart3 } from 'lucide-react';
+import { ArrowLeft, Edit3, Rocket, Target, DollarSign, Calendar, Radio, Image, BarChart3, Sparkles } from 'lucide-react';
 import { Campaign, UserData } from '../types/campaign';
 import CampaignImageGenerator from './CampaignImageGenerator';
 import CampaignDashboard from './CampaignDashboard';
@@ -186,22 +186,13 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
           ventaPromedio={ventaPromedio}
         />
 
-        {/* Botones de acción */}
-        <div className="flex justify-center space-x-4">
+        {/* Botón de call-to-action */}
+        <div className="flex justify-center">
           <Button
-            onClick={onEdit}
-            variant="outline"
-            className="px-6 py-2"
+            className="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 hover:from-yellow-500 hover:via-orange-600 hover:to-red-600 text-white px-12 py-4 text-xl font-bold shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 rounded-full border-4 border-white"
           >
-            <Edit3 className="w-4 h-4 mr-2" />
-            Optimizar campaña
-          </Button>
-          
-          <Button
-            onClick={onBack}
-            className="px-6 py-2"
-          >
-            Crear nueva campaña
+            <Sparkles className="w-6 h-6 mr-3" />
+            Probar tuki <span className="font-black">gratis</span> por 2 meses!!!
           </Button>
         </div>
       </div>
