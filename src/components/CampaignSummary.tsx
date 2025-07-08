@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -221,7 +222,7 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
             ¡Tu campaña está lista! 🎉
           </h2>
           <p className="text-gray-600">
-            Revisá los detalles y decidí si querés editarla o publicarla
+            Revisá los detalles y generá imágenes para tu campaña
           </p>
         </div>
       </div>
@@ -363,6 +364,7 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
           {/* Action Buttons */}
           <div className="border-t pt-8">
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              {/* Mostrar botón de generar imágenes si no hay imágenes */}
               {!campaignWithImages.imagenes || campaignWithImages.imagenes.length === 0 ? (
                 <Button
                   onClick={handleGenerateImages}
@@ -372,34 +374,37 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
                   Generar imágenes
                 </Button>
               ) : (
-                <Button
-                  onClick={handleGenerateImages}
-                  variant="outline"
-                  className="border-2 border-purple-300 hover:border-purple-400 px-8 py-3 text-lg font-semibold"
-                >
-                  <Image className="w-5 h-5 mr-2" />
-                  Cambiar imágenes
-                </Button>
-              )}
+                // Mostrar todas las acciones después de tener imágenes
+                <>
+                  <Button
+                    onClick={handleGenerateImages}
+                    variant="outline"
+                    className="border-2 border-purple-300 hover:border-purple-400 px-8 py-3 text-lg font-semibold"
+                  >
+                    <Image className="w-5 h-5 mr-2" />
+                    Cambiar imágenes
+                  </Button>
 
-              <Button
-                onClick={handlePublishCampaign}
-                disabled={isPublishing}
-                className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50"
-              >
-                <Rocket className="w-5 h-5 mr-2" />
-                {isPublishing ? 'Publicando...' : 'Publicar en Instagram'}
-              </Button>
+                  <Button
+                    onClick={handlePublishCampaign}
+                    disabled={isPublishing}
+                    className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50"
+                  >
+                    <Rocket className="w-5 h-5 mr-2" />
+                    {isPublishing ? 'Publicando...' : 'Publicar en Instagram'}
+                  </Button>
 
-              {/* Botón para ver dashboard - siempre visible después de publicar */}
-              {publishedSuccessfully && (
-                <Button
-                  onClick={handleViewDashboard}
-                  className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
-                >
-                  <BarChart3 className="w-5 h-5 mr-2" />
-                  Ver rendimiento económico
-                </Button>
+                  {/* Botón para ver dashboard - siempre visible después de publicar */}
+                  {publishedSuccessfully && (
+                    <Button
+                      onClick={handleViewDashboard}
+                      className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+                    >
+                      <BarChart3 className="w-5 h-5 mr-2" />
+                      Ver rendimiento económico
+                    </Button>
+                  )}
+                </>
               )}
             </div>
           </div>
