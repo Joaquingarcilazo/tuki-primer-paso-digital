@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -269,13 +268,12 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
               </div>
               <div className="bg-pink-50 rounded-lg p-4 border-l-4 border-pink-500">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {campaignWithImages.imagenes.map((imageUrl, index) => (
-                    <img
-                      key={index}
-                      src={imageUrl}
-                      alt={`Campaign image ${index + 1}`}
-                      className="w-full h-20 object-cover rounded-lg shadow-sm"
-                    />
+                  {campaignWithImages.imagenes.map((imageId, index) => (
+                    <div key={index} className="w-full h-20 bg-gray-100 rounded-lg shadow-sm flex items-center justify-center">
+                      <span className="text-gray-600 font-medium text-sm">
+                        Opción {index + 1}
+                      </span>
+                    </div>
                   ))}
                 </div>
               </div>
