@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -147,34 +146,49 @@ const TukiChat: React.FC = () => {
 
   const startOnboarding = () => {
     console.log('✨ Iniciando conversación con Tuki...');
-    const welcomeMessage: Message = {
-      id: 'welcome-' + Date.now() + '-' + Math.random(),
-      text: 'Te ayudaré 24/7 a crear campañas efectivas de marketing digital para tu negocio. ¿Comenzamos?',
+    
+    // 1. Primer mensaje: Saludo de Tuki
+    const greetingMessage: Message = {
+      id: 'greeting-' + Date.now() + '-' + Math.random(),
+      text: '¡Hola! Soy Tuki 👋',
       isBot: true,
       timestamp: new Date()
     };
 
-    setMessages([welcomeMessage]);
+    setMessages([greetingMessage]);
     setHasStarted(true);
 
-    // 1. Espera 2 segundos, luego muestra "Trabajando para tu negocio"
+    // 2. Después de 2 segundos, mostrar el mensaje de bienvenida
     setTimeout(() => {
-      setShowWorking(true);
+      const welcomeMessage: Message = {
+        id: 'welcome-' + Date.now() + '-' + Math.random(),
+        text: 'Te ayudaré 24/7 a crear campañas efectivas de marketing digital para tu negocio. ¿Comenzamos?',
+        isBot: true,
+        timestamp: new Date()
+      };
 
-      // 2. Espera 3 segundos, luego oculta el mensaje y muestra la primera pregunta
+      setMessages(prev => [...prev, welcomeMessage]);
+
+      // 3. Espera 2 segundos más, luego muestra "Trabajando para tu negocio"
       setTimeout(() => {
-        setShowWorking(false);
-        setIsTyping(true);
+        setShowWorking(true);
 
+        // 4. Espera 3 segundos, luego oculta el mensaje y muestra la primera pregunta
         setTimeout(() => {
-          setIsTyping(false);
-          setCurrentQuestion(0);
-          showNextQuestion(0);
-        }, 1500); // Duración del "pensando..."
+          setShowWorking(false);
+          setIsTyping(true);
 
-      }, 3000); // "Trabajando para tu negocio" visible 3s
+          setTimeout(() => {
+            setIsTyping(false);
+            setCurrentQuestion(0);
+            showNextQuestion(0);
+          }, 1500); // Duración del "pensando..."
 
-    }, 2000); // Delay entre bienvenida y "Trabajando..."
+        }, 3000); // "Trabajando para tu negocio" visible 3s
+
+      }, 2000); // Delay entre bienvenida y "Trabajando..."
+
+    }, 2000); // Delay entre saludo y bienvenida
   };
 
   useEffect(() => {
