@@ -93,7 +93,7 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
       
       // Mostrar resultado exitoso
       toast({
-        title: "🎉 ¡Campaña publicada!",
+        title: "🎉 ¡Genial!",
         description: `Tu publicación de Instagram fue publicada exitosamente. ID: ${instagramPost.id.slice(-8)}`,
       });
       
