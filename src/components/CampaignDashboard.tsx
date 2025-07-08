@@ -24,13 +24,6 @@ interface DailyMetric {
   day: string;
   impresiones: number;
   clicks: number;
-  ventas: number;
-}
-
-interface SocialMediaPerformance {
-  platform: string;
-  ctr: number;
-  color: string;
 }
 
 interface Insight {
@@ -47,20 +40,20 @@ interface InvestmentData {
 const kpiData: KPI[] = [
   {
     label: 'Impresiones',
-    value: '124,890',
-    subtitle: 'vs. 98,760 el mes pasado',
+    value: '1,248,900',
+    subtitle: 'vs. 987,600 el mes pasado',
     icon: Eye,
   },
   {
     label: 'Clicks',
-    value: '28,730',
-    subtitle: 'vs. 22,450 el mes pasado',
+    value: '287,300',
+    subtitle: 'vs. 224,500 el mes pasado',
     icon: MousePointer,
   },
   {
     label: 'Conversiones',
-    value: '6,340',
-    subtitle: 'vs. 5,120 el mes pasado',
+    value: '63,400',
+    subtitle: 'vs. 51,200 el mes pasado',
     icon: ShoppingCart,
   },
   {
@@ -72,20 +65,13 @@ const kpiData: KPI[] = [
 ];
 
 const dailyMetrics: DailyMetric[] = [
-  { day: 'Lunes', impresiones: 12000, clicks: 2400, ventas: 450 },
-  { day: 'Martes', impresiones: 15000, clicks: 3000, ventas: 500 },
-  { day: 'Miércoles', impresiones: 13000, clicks: 2600, ventas: 480 },
-  { day: 'Jueves', impresiones: 14000, clicks: 2800, ventas: 520 },
-  { day: 'Viernes', impresiones: 16000, clicks: 3200, ventas: 550 },
-  { day: 'Sábado', impresiones: 18000, clicks: 3600, ventas: 600 },
-  { day: 'Domingo', impresiones: 20000, clicks: 4000, ventas: 650 },
-];
-
-const socialMediaPerformance: SocialMediaPerformance[] = [
-  { platform: 'Facebook', ctr: 8, color: '#1877F2' },
-  { platform: 'Instagram', ctr: 12, color: '#E4405F' },
-  { platform: 'Twitter', ctr: 6, color: '#1DA1F2' },
-  { platform: 'LinkedIn', ctr: 4, color: '#2867B2' },
+  { day: 'Lunes', impresiones: 120000, clicks: 24000 },
+  { day: 'Martes', impresiones: 150000, clicks: 30000 },
+  { day: 'Miércoles', impresiones: 130000, clicks: 26000 },
+  { day: 'Jueves', impresiones: 140000, clicks: 28000 },
+  { day: 'Viernes', impresiones: 160000, clicks: 32000 },
+  { day: 'Sábado', impresiones: 180000, clicks: 36000 },
+  { day: 'Domingo', impresiones: 200000, clicks: 40000 },
 ];
 
 const insights: Insight[] = [
@@ -102,8 +88,8 @@ const recommendations: string[] = [
 
 // Datos para el gráfico de inversión vs ingresos
 const investmentData: InvestmentData[] = [
-  { type: 'Inversión total', amount: 25000, color: '#ef4444' },
-  { type: 'Ingresos generados', amount: 78500, color: '#10b981' },
+  { type: 'Inversión total', amount: 250000, color: '#ef4444' },
+  { type: 'Ingresos generados', amount: 785000, color: '#10b981' },
 ];
 
 const CampaignDashboard: React.FC = () => {
@@ -114,12 +100,9 @@ const CampaignDashboard: React.FC = () => {
         <h1 className="text-3xl font-bold text-gray-800 mb-4">
           📊 Dashboard de tu campaña
         </h1>
-        <p className="text-gray-600 text-lg">
-          Así está funcionando tu campaña publicitaria en tiempo real
-        </p>
       </div>
 
-      {/* ROI Summary - Moved to first position */}
+      {/* ROI Summary - First position */}
       <Card className="p-6 bg-gradient-to-r from-green-50 to-blue-50 border border-green-200">
         <div className="text-center">
           <h3 className="text-xl font-bold text-gray-800 mb-2">
@@ -128,11 +111,11 @@ const CampaignDashboard: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
             <div>
               <p className="text-sm text-gray-600">Inversión total</p>
-              <p className="text-2xl font-bold text-gray-800">$25,000</p>
+              <p className="text-2xl font-bold text-gray-800">$250,000</p>
             </div>
             <div>
               <p className="text-sm text-gray-600">Ingresos generados</p>
-              <p className="text-2xl font-bold text-green-600">$78,500</p>
+              <p className="text-2xl font-bold text-green-600">$785,000</p>
             </div>
             <div>
               <p className="text-sm text-gray-600">Retorno</p>
@@ -168,7 +151,7 @@ const CampaignDashboard: React.FC = () => {
                 axisLine={false}
                 tickLine={false}
                 tick={{ fontSize: 12, fill: '#666' }}
-                domain={[0, 'dataMax + 5000']}
+                domain={[0, 'dataMax + 50000']}
                 tickFormatter={(value) => `$${value.toLocaleString()}`}
               />
               <Bar dataKey="amount" radius={[4, 4, 0, 0]}>
@@ -209,101 +192,47 @@ const CampaignDashboard: React.FC = () => {
         ))}
       </div>
 
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {/* Métricas por Día */}
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">
-            Métricas por día
-          </h3>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart 
-                data={dailyMetrics} 
-                margin={{ top: 20, right: 30, left: 20, bottom: 30 }}
-                maxBarSize={40}
-              >
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis 
-                  dataKey="day" 
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fontSize: 12, fill: '#666' }}
-                />
-                <YAxis 
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fontSize: 12, fill: '#666' }}
-                  domain={[0, 'dataMax + 1000']}
-                />
-                <Bar dataKey="impresiones" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="clicks" fill="#10b981" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="ventas" fill="#f59e0b" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+      {/* Daily Metrics Chart */}
+      <Card className="p-6 mb-8">
+        <h3 className="text-lg font-semibold text-gray-800 mb-4">
+          Métricas por día
+        </h3>
+        <div className="h-64">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart 
+              data={dailyMetrics} 
+              margin={{ top: 20, right: 30, left: 20, bottom: 30 }}
+              maxBarSize={40}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <XAxis 
+                dataKey="day" 
+                axisLine={false}
+                tickLine={false}
+                tick={{ fontSize: 12, fill: '#666' }}
+              />
+              <YAxis 
+                axisLine={false}
+                tickLine={false}
+                tick={{ fontSize: 12, fill: '#666' }}
+                domain={[0, 'dataMax + 10000']}
+              />
+              <Bar dataKey="impresiones" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="clicks" fill="#10b981" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+        <div className="flex justify-center space-x-6 mt-4">
+          <div className="flex items-center">
+            <div className="w-3 h-3 bg-blue-500 rounded mr-2"></div>
+            <span className="text-sm text-gray-600">Impresiones</span>
           </div>
-          <div className="flex justify-center space-x-6 mt-4">
-            <div className="flex items-center">
-              <div className="w-3 h-3 bg-blue-500 rounded mr-2"></div>
-              <span className="text-sm text-gray-600">Impresiones</span>
-            </div>
-            <div className="flex items-center">
-              <div className="w-3 h-3 bg-green-500 rounded mr-2"></div>
-              <span className="text-sm text-gray-600">Clicks</span>
-            </div>
-            <div className="flex items-center">
-              <div className="w-3 h-3 bg-yellow-500 rounded mr-2"></div>
-              <span className="text-sm text-gray-600">Ventas</span>
-            </div>
+          <div className="flex items-center">
+            <div className="w-3 h-3 bg-green-500 rounded mr-2"></div>
+            <span className="text-sm text-gray-600">Clicks</span>
           </div>
-        </Card>
-
-        {/* Performance por Red Social */}
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">
-            Performance por red social
-          </h3>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart 
-                data={socialMediaPerformance} 
-                margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
-                maxBarSize={80}
-              >
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis 
-                  dataKey="platform" 
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fontSize: 12, fill: '#666' }}
-                />
-                <YAxis 
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fontSize: 12, fill: '#666' }}
-                  domain={[0, 'dataMax + 10']}
-                />
-                <Bar dataKey="ctr" radius={[4, 4, 0, 0]}>
-                  {socialMediaPerformance.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-          <div className="flex justify-center space-x-4 mt-4">
-            {socialMediaPerformance.map((item, index) => (
-              <div key={index} className="flex items-center">
-                <div 
-                  className="w-3 h-3 rounded mr-2"
-                  style={{ backgroundColor: item.color }}
-                ></div>
-                <span className="text-sm text-gray-600">{item.platform}</span>
-              </div>
-            ))}
-          </div>
-        </Card>
-      </div>
+        </div>
+      </Card>
 
       {/* Insights y Recomendaciones */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
@@ -337,6 +266,27 @@ const CampaignDashboard: React.FC = () => {
           </div>
         </Card>
       </div>
+
+      {/* Call to Action Button */}
+      <Card className="p-8 bg-gradient-to-r from-orange-100 to-pink-100 border border-orange-200">
+        <div className="text-center">
+          <h3 className="text-2xl font-bold text-gray-800 mb-4">
+            🚀 ¿Te gustan estos resultados?
+          </h3>
+          <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+            Tuki puede ayudarte a obtener resultados similares para tu negocio. 
+            Déjanos tus datos y te contactaremos para una consulta gratuita.
+          </p>
+          <Button 
+            onClick={handleTryFree}
+            size="lg" 
+            className="bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white px-8 py-3 text-lg font-semibold"
+          >
+            Probar Tuki gratis
+            <ArrowRight className="ml-2 w-5 h-5" />
+          </Button>
+        </div>
+      </Card>
     </div>
   );
 };
