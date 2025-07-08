@@ -10,6 +10,7 @@ import CampaignDashboard from './CampaignDashboard';
 import { toast } from '@/components/ui/use-toast';
 import { publishToInstagram } from '@/services/instagramPublisher';
 import InstagramPreview from './InstagramPreview';
+import TukiChat from './TukiChat';
 
 interface CampaignSummaryProps {
   campaign: Campaign;
@@ -40,6 +41,7 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
   const [isPublishing, setIsPublishing] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
   const [publishedSuccessfully, setPublishedSuccessfully] = useState(false);
+  const [showEditBriefing, setShowEditBriefing] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -121,6 +123,19 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
   const handleBackFromDashboard = () => {
     setShowDashboard(false);
   };
+
+  const handleEditBriefing = () => {
+    setShowEditBriefing(true);
+  };
+
+  const handleBackFromEditBriefing = () => {
+    setShowEditBriefing(false);
+  };
+
+  // Mostrar editor de briefing si está activado
+  if (showEditBriefing) {
+    return <TukiChat />;
+  }
 
   if (showImageGenerator) {
     return (
@@ -388,7 +403,7 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
               )}
               
               <Button
-                onClick={onEdit}
+                onClick={handleEditBriefing}
                 variant="outline"
                 className="border-2 border-gray-300 hover:border-gray-400 px-8 py-3 text-lg font-semibold"
               >
