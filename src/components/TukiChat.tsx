@@ -73,7 +73,7 @@ const questions = [
     id: 'objetivoMarketing',
     text: 'Excelente. ¿Cuál es tu principal objetivo de marketing para esta campaña? 🚀',
     type: 'options',
-    options: ['Aumentar visibilidad', 'Generar interacción con mi negocio (conversaciones)', 'Aumentar ventas/consultas']
+    options: ['Aumentar visibilidad', 'Generar más conversaciones con mis clientes', 'Aumentar ventas/consultas']
   },
   {
     id: 'redesSociales',
