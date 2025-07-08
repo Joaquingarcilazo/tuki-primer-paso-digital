@@ -157,7 +157,7 @@ const TukiChat: React.FC = () => {
       
       const welcomeMessage: Message = {
         id: 'welcome-' + Date.now() + '-' + Math.random(),
-        text: 'Te ayudaré 24/7 a crear campañas efectivas de marketing digital para tu negocio. ¿Comenzamos?',
+        text: 'Trabajaré 24/7 creando campañas efectivas de marketing digital para tu negocio. ¿Comenzamos?',
         isBot: true,
         timestamp: new Date()
       };
