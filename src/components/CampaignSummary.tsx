@@ -230,32 +230,17 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
             </Button>
             <div>
               <h2 className="text-3xl font-bold text-gray-800">
-                📊 Rendimiento Económico
+                Así está funcionando tu campaña en tiempo real
               </h2>
               <p className="text-gray-600">
-                Así está funcionando tu campaña de <strong>{userData.productoServicio}</strong>
+                Campaña de <strong>{userData.productoServicio}</strong>
               </p>
             </div>
           </div>
         </div>
 
         {/* Dashboard económico */}
-        <CampaignDashboard
-          adAccountId={metaAdAccountId}
-          campaignId={metaCampaignId}
-          accessToken={metaAccessToken}
-          ventaPromedio={ventaPromedio}
-        />
-
-        {/* Botón de call-to-action */}
-        <div className="flex justify-center">
-          <Button
-            className="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 hover:from-yellow-500 hover:via-orange-600 hover:to-red-600 text-white px-12 py-4 text-xl font-bold shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 rounded-full border-4 border-white"
-          >
-            <Sparkles className="w-6 h-6 mr-3" />
-            Probar tuki <span className="font-black">gratis</span> por 2 meses!!!
-          </Button>
-        </div>
+        <CampaignDashboard />
       </div>
     );
   }
