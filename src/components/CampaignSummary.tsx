@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -34,7 +35,6 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
 }) => {
   const [showImageGenerator, setShowImageGenerator] = useState(false);
   const [campaignWithImages, setCampaignWithImages] = useState<Campaign>(campaign);
-  const [showInstagramPreview, setShowInstagramPreview] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
   const [publishedSuccessfully, setPublishedSuccessfully] = useState(false);
@@ -85,9 +85,6 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
       // Obtener la URL real de la imagen
       const imageData = getImageForId(imageToUse);
       
-      // Mostrar preview de Instagram primero
-      setShowInstagramPreview(true);
-      
       // Simular publicación en Instagram
       const instagramPost = await publishToInstagram(campaignWithImages, userData, imageData.url);
       
@@ -100,6 +97,9 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
         description: `Tu publicación de Instagram fue programada exitosamente. ID: ${instagramPost.id.slice(-8)}`,
       });
       
+      // Ir directamente al dashboard después de publicar
+      setShowDashboard(true);
+      
     } catch (error) {
       console.error('Error publicando campaña:', error);
       toast({
@@ -110,10 +110,6 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
     } finally {
       setIsPublishing(false);
     }
-  };
-
-  const handleClosePreview = () => {
-    setShowInstagramPreview(false);
   };
 
   const handleBackFromImageGenerator = () => {
@@ -220,39 +216,6 @@ const CampaignSummary: React.FC<CampaignSummaryProps> = ({
           </p>
         </div>
       </div>
-
-      {/* Instagram Preview Modal */}
-      {showInstagramPreview && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-lg font-semibold mb-4 text-center">
-              🎉 ¡Tu publicación de Instagram ya está generando resultados!
-            </h3>
-            <InstagramPreview
-              caption={campaignWithImages.texto}
-              imageUrl={campaignWithImages.imagenes?.[0] ? getImageForId(campaignWithImages.imagenes[0]).url : ''}
-              hashtags={['#emprendimiento', '#argentina', '#negocio']}
-              accountName={userData.productoServicio.toLowerCase().replace(/\s+/g, '_')}
-            />
-            <div className="mt-6 flex flex-col space-y-3">
-              <div className="text-center">
-                <div className="inline-flex items-center space-x-2 text-green-600 mb-4">
-                  <div className="w-2 h-2 bg-green-600 rounded-full"></div>
-                  <span className="text-sm">¡Publicación exitosa!</span>
-                </div>
-              </div>
-              
-              <Button
-                onClick={handleViewDashboard}
-                className="w-full bg-green-600 hover:bg-green-700 text-white"
-              >
-                <BarChart3 className="w-4 h-4 mr-2" />
-                Ver rendimiento económico
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Campaign Summary Card */}
       <Card className="bg-white/80 backdrop-blur-sm shadow-xl border-0 p-8">
