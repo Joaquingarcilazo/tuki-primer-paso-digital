@@ -163,7 +163,7 @@ const TukiChat: React.FC = () => {
       
       const welcomeMessage: Message = {
         id: 'welcome-' + Date.now() + '-' + Math.random(),
-        text: 'Durante un mes estaré 24/7 creando campañas efectivas de marketing digital para tu negocio.',
+        text: 'Estaré 24/7 creando campañas efectivas de marketing digital.',
         isBot: true,
         timestamp: new Date()
       };
@@ -722,7 +722,7 @@ const TukiChat: React.FC = () => {
         <div className="h-[600px] flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-6xl font-bold text-blue-600 mb-4">
-              ¡Hola! Si ya tenés tu negocio y necesitás hacer una campaña de marketing digital seguime... Soy Tuki 👋
+              ¡Hola! Soy Tuki 👋
             </h1>
           </div>
         </div>
