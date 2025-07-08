@@ -82,7 +82,7 @@ const TukiChat: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
-
+  const [showWorking, setShowWorking] = useState(false);
   useEffect(() => {
     // Forzar reinicio completo SIEMPRE
     console.log('🔄 Reiniciando onboarding completamente...');
@@ -111,7 +111,7 @@ const TukiChat: React.FC = () => {
     }, 800);
   }, []); // Sin dependencias para que se ejecute solo al montar
 
-const startOnboarding = () => {
+cconst startOnboarding = () => {
   console.log('✨ Iniciando conversación con Tuki...');
   const welcomeMessage: Message = {
     id: 'welcome-' + Date.now() + '-' + Math.random(),
@@ -119,6 +119,29 @@ const startOnboarding = () => {
     isBot: true,
     timestamp: new Date()
   };
+
+  setMessages([welcomeMessage]);
+  setHasStarted(true);
+
+  // 1. Espera 2 segundos, luego muestra "Trabajando para tu negocio"
+  setTimeout(() => {
+    setShowWorking(true);
+
+    // 2. Espera 3 segundos, luego oculta el mensaje y muestra la primera pregunta
+    setTimeout(() => {
+      setShowWorking(false);
+      setIsTyping(true);
+
+      setTimeout(() => {
+        setIsTyping(false);
+        setCurrentQuestion(0);
+        showNextQuestion(0);
+      }, 1500); // Duración del "pensando..."
+
+    }, 3000); // "Trabajando para tu negocio" visible 3s
+
+  }, 2000); // Delay entre bienvenida y "Trabajando..."
+};
 
   setMessages([welcomeMessage]);
   setHasStarted(true);
@@ -446,7 +469,16 @@ const startOnboarding = () => {
           {messages.map((message) => (
             <ChatMessage key={message.id} message={message} />
           ))}
-          
+          {showWorking && (
+  <div className="flex items-center gap-3 px-4 py-2">
+    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+      <span className="text-sm">🤖</span>
+    </div>
+    <span style={{ fontWeight: 'bold', color: '#2563eb' }}>
+      Trabajando para tu negocio
+    </span>
+  </div>
+)}
           {isTyping && (
             <div className="flex items-center gap-3 px-4 py-2 text-gray-600">
               <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
