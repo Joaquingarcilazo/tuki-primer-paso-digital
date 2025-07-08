@@ -137,8 +137,6 @@ const startOnboarding = () => {
   }, 2000); // Delay entre bienvenida y "pensando..."
 };
 
-
-
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
@@ -294,10 +292,15 @@ const startOnboarding = () => {
     }
   };
 
-  const completeClienteIdeal = () => {
-    const selectedOptions = userData.clienteIdeal.length > 0 
-      ? userData.clienteIdeal
-      : 'No especificado';
+  const completeMultipleChoice = () => {
+    const currentQuestionId = questions[currentQuestion].id;
+    let selectedOptions = '';
+    
+    if (currentQuestionId === 'clienteIdeal') {
+      selectedOptions = userData.clienteIdeal.length > 0 ? userData.clienteIdeal : 'No especificado';
+    } else if (currentQuestionId === 'redesSociales') {
+      selectedOptions = userData.redesSociales.length > 0 ? userData.redesSociales.join(', ') : 'No tengo redes activas aún';
+    }
     
     const userMessage: Message = {
       id: Date.now().toString() + '-' + Math.random(),
@@ -318,24 +321,6 @@ const startOnboarding = () => {
         completeOnboarding(userData);
       }
     }, 1000);
-  };
-
-  const completeRedesSociales = () => {
-    const selectedOptions = userData.redesSociales.length > 0 
-      ? userData.redesSociales.join(', ') 
-      : 'No tengo redes activas aún';
-    
-    const userMessage: Message = {
-      id: Date.now().toString() + '-' + Math.random(),
-      text: selectedOptions,
-      isBot: false,
-      timestamp: new Date()
-    };
-
-    setMessages(prev => [...prev, userMessage]);
-    
-    const updatedUserData = { ...userData };
-    completeOnboarding(updatedUserData);
   };
 
   const completeOnboarding = (finalUserData: UserData) => {
@@ -552,7 +537,7 @@ const startOnboarding = () => {
                   })}
                 </div>
                 <Button 
-                  onClick={currentQuestionData.id === 'clienteIdeal' ? completeClienteIdeal : completeRedesSociales}
+                  onClick={completeMultipleChoice}
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white"
                 >
                   Continuar
