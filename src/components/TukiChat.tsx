@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -23,6 +22,13 @@ interface UserData {
   redesSociales: string[];
 }
 
+interface ClienteIdealData {
+  edad: string;
+  genero: string;
+  nivelAdquisitivo: string;
+  caracteristicasAdicionales: string[];
+}
+
 const questions = [
   {
     id: 'productoServicio',
@@ -31,23 +37,33 @@ const questions = [
     type: 'textarea'
   },
   {
-    id: 'clienteIdeal',
-    text: '¡Genial! Ahora ayudame a definir tu cliente ideal. Seleccioná todas las características que mejor describan a tu público objetivo 🎯',
+    id: 'edad',
+    text: 'Perfecto! Ahora definamos tu cliente ideal. Empecemos por la edad. ¿Qué rango de edad tiene tu público objetivo? 🎯',
+    type: 'options',
+    options: ['Jóvenes (18-30 años)', 'Adultos (30-50 años)', 'Adultos mayores (50+ años)', 'Todas las edades']
+  },
+  {
+    id: 'genero',
+    text: '¡Excelente! Ahora, ¿a qué género está dirigido principalmente tu producto o servicio? 👥',
+    type: 'options',
+    options: ['Hombres', 'Mujeres', 'Ambos géneros']
+  },
+  {
+    id: 'nivelAdquisitivo',
+    text: 'Genial. ¿Qué nivel adquisitivo tiene tu cliente ideal? 💰',
+    type: 'options',
+    options: ['Poder adquisitivo alto', 'Presupuesto moderado', 'Precio accesible', 'Todos los niveles']
+  },
+  {
+    id: 'caracteristicasAdicionales',
+    text: 'Perfecto! Para terminar de definir tu cliente ideal, ¿qué otras características lo describen? Seleccioná todas las que apliquen 🎯',
     type: 'multiple',
     options: [
-      'Jóvenes (18-30 años)',
-      'Adultos (30-50 años)',
-      'Adultos mayores (50+ años)',
-      'Hombres',
-      'Mujeres',
       'Familias con hijos',
       'Profesionales/Ejecutivos',
       'Emprendedores/Pequeños empresarios',
       'Estudiantes',
-      'Personas con poder adquisitivo alto',
-      'Personas con presupuesto moderado',
       'Personas que buscan calidad premium',
-      'Personas que buscan precio accesible',
       'Personas activas/deportistas',
       'Personas interesadas en tecnología',
       'Personas del barrio/zona local'
@@ -77,6 +93,12 @@ const TukiChat: React.FC = () => {
     objetivoMarketing: '',
     redesSociales: []
   });
+  const [clienteIdealData, setClienteIdealData] = useState<ClienteIdealData>({
+    edad: '',
+    genero: '',
+    nivelAdquisitivo: '',
+    caracteristicasAdicionales: []
+  });
   const [isComplete, setIsComplete] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
@@ -84,6 +106,7 @@ const TukiChat: React.FC = () => {
   const [validationError, setValidationError] = useState<string | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [showWorking, setShowWorking] = useState(false);
+  const [showClienteIdealSummary, setShowClienteIdealSummary] = useState(false);
 
   useEffect(() => {
     // Forzar reinicio completo SIEMPRE
@@ -166,9 +189,82 @@ const TukiChat: React.FC = () => {
         };
         setMessages(prev => [...prev, newMessage]);
         setIsTyping(false);
-        setValidationError(null); // Limpiar errores de validación
+        setValidationError(null);
       }
     }, 1500);
+  };
+
+  const buildClienteIdealString = () => {
+    const parts = [];
+    if (clienteIdealData.edad) parts.push(clienteIdealData.edad);
+    if (clienteIdealData.genero && clienteIdealData.genero !== 'Ambos géneros') parts.push(clienteIdealData.genero);
+    if (clienteIdealData.nivelAdquisitivo && clienteIdealData.nivelAdquisitivo !== 'Todos los niveles') parts.push(clienteIdealData.nivelAdquisitivo);
+    if (clienteIdealData.caracteristicasAdicionales.length > 0) {
+      parts.push(...clienteIdealData.caracteristicasAdicionales);
+    }
+    return parts.join(', ');
+  };
+
+  const showClienteIdealConfirmation = () => {
+    setShowClienteIdealSummary(true);
+    setIsTyping(true);
+    
+    setTimeout(() => {
+      const clienteIdealString = buildClienteIdealString();
+      const confirmationMessage: Message = {
+        id: `cliente-confirmation-${Date.now()}-${Math.random()}`,
+        text: `Perfecto! Según lo que me contaste, tu cliente ideal es: "${clienteIdealString}". ¿Está correcto? 🎯`,
+        isBot: true,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, confirmationMessage]);
+      setIsTyping(false);
+    }, 1500);
+  };
+
+  const handleClienteIdealConfirmation = (confirmed: boolean) => {
+    if (confirmed) {
+      const clienteIdealString = buildClienteIdealString();
+      setUserData(prev => ({ ...prev, clienteIdeal: clienteIdealString }));
+      
+      const userMessage: Message = {
+        id: Date.now().toString() + '-' + Math.random(),
+        text: 'Sí, está correcto',
+        isBot: false,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, userMessage]);
+      
+      setShowClienteIdealSummary(false);
+      setCurrentQuestion(5); // Ir a objetivo de marketing
+      
+      setTimeout(() => {
+        showNextQuestion(5);
+      }, 1000);
+    } else {
+      const userMessage: Message = {
+        id: Date.now().toString() + '-' + Math.random(),
+        text: 'No, me gustaría modificarlo',
+        isBot: false,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, userMessage]);
+      
+      // Resetear datos del cliente ideal y volver al primer paso
+      setClienteIdealData({
+        edad: '',
+        genero: '',
+        nivelAdquisitivo: '',
+        caracteristicasAdicionales: []
+      });
+      
+      setShowClienteIdealSummary(false);
+      setCurrentQuestion(1); // Volver a edad
+      
+      setTimeout(() => {
+        showNextQuestion(1);
+      }, 1000);
+    }
   };
 
   const showValidationError = (errorMessage: string) => {
@@ -244,51 +340,50 @@ const TukiChat: React.FC = () => {
     }, 1000);
   };
 
-  const handleOptionSelect = (option: string) => {
+  const handleOptionSelectNew = (option: string) => {
     const userMessage: Message = {
       id: Date.now().toString() + '-' + Math.random(),
       text: option,
       isBot: false,
       timestamp: new Date()
     };
-
     setMessages(prev => [...prev, userMessage]);
 
-    const questionKey = questions[currentQuestion].id as keyof UserData;
-    const updatedUserData = {
-      ...userData,
-      [questionKey]: option
-    };
-    setUserData(updatedUserData);
-
-    const nextQuestion = currentQuestion + 1;
-    setCurrentQuestion(nextQuestion);
-
-    setTimeout(() => {
-      if (nextQuestion < questions.length) {
-        showNextQuestion(nextQuestion);
-      } else {
-        completeOnboarding(updatedUserData);
-      }
-    }, 1000);
+    const currentQuestionId = questions[currentQuestion].id;
+    
+    // Manejar selecciones del cliente ideal
+    if (currentQuestionId === 'edad') {
+      setClienteIdealData(prev => ({ ...prev, edad: option }));
+      setCurrentQuestion(2); // Ir a género
+      setTimeout(() => showNextQuestion(2), 1000);
+    } else if (currentQuestionId === 'genero') {
+      setClienteIdealData(prev => ({ ...prev, genero: option }));
+      setCurrentQuestion(3); // Ir a nivel adquisitivo
+      setTimeout(() => showNextQuestion(3), 1000);
+    } else if (currentQuestionId === 'nivelAdquisitivo') {
+      setClienteIdealData(prev => ({ ...prev, nivelAdquisitivo: option }));
+      setCurrentQuestion(4); // Ir a características adicionales
+      setTimeout(() => showNextQuestion(4), 1000);
+    } else if (currentQuestionId === 'objetivoMarketing') {
+      setUserData(prev => ({ ...prev, objetivoMarketing: option }));
+      setCurrentQuestion(6); // Ir a redes sociales
+      setTimeout(() => showNextQuestion(6), 1000);
+    }
   };
 
   const handleMultipleSelect = (option: string) => {
     const currentQuestionId = questions[currentQuestion].id;
     
-    if (currentQuestionId === 'clienteIdeal') {
-      // Manejar clienteIdeal como string (las opciones seleccionadas se joinean)
-      const currentSelections = userData.clienteIdeal.split(', ').filter(item => item.length > 0);
-      const updatedSelections = currentSelections.includes(option) 
-        ? currentSelections.filter(item => item !== option)
-        : [...currentSelections, option];
+    if (currentQuestionId === 'caracteristicasAdicionales') {
+      const updatedSelections = clienteIdealData.caracteristicasAdicionales.includes(option) 
+        ? clienteIdealData.caracteristicasAdicionales.filter(item => item !== option)
+        : [...clienteIdealData.caracteristicasAdicionales, option];
       
-      setUserData(prev => ({
+      setClienteIdealData(prev => ({
         ...prev,
-        clienteIdeal: updatedSelections.join(', ')
+        caracteristicasAdicionales: updatedSelections
       }));
     } else if (currentQuestionId === 'redesSociales') {
-      // Manejar redesSociales como array
       const updatedRedesSociales = userData.redesSociales.includes(option) 
         ? userData.redesSociales.filter(item => item !== option)
         : [...userData.redesSociales, option];
@@ -304,31 +399,42 @@ const TukiChat: React.FC = () => {
     const currentQuestionId = questions[currentQuestion].id;
     let selectedOptions = '';
     
-    if (currentQuestionId === 'clienteIdeal') {
-      selectedOptions = userData.clienteIdeal.length > 0 ? userData.clienteIdeal : 'No especificado';
+    if (currentQuestionId === 'caracteristicasAdicionales') {
+      selectedOptions = clienteIdealData.caracteristicasAdicionales.length > 0 
+        ? clienteIdealData.caracteristicasAdicionales.join(', ') 
+        : 'Sin características adicionales';
+        
+      const userMessage: Message = {
+        id: Date.now().toString() + '-' + Math.random(),
+        text: selectedOptions,
+        isBot: false,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, userMessage]);
+      
+      // Mostrar resumen del cliente ideal
+      setTimeout(() => {
+        showClienteIdealConfirmation();
+      }, 1000);
+      
     } else if (currentQuestionId === 'redesSociales') {
-      selectedOptions = userData.redesSociales.length > 0 ? userData.redesSociales.join(', ') : 'Ningún canal seleccionado';
-    }
-    
-    const userMessage: Message = {
-      id: Date.now().toString() + '-' + Math.random(),
-      text: selectedOptions,
-      isBot: false,
-      timestamp: new Date()
-    };
-
-    setMessages(prev => [...prev, userMessage]);
-    
-    const nextQuestion = currentQuestion + 1;
-    setCurrentQuestion(nextQuestion);
-
-    setTimeout(() => {
-      if (nextQuestion < questions.length) {
-        showNextQuestion(nextQuestion);
-      } else {
+      selectedOptions = userData.redesSociales.length > 0 
+        ? userData.redesSociales.join(', ') 
+        : 'Ningún canal seleccionado';
+        
+      const userMessage: Message = {
+        id: Date.now().toString() + '-' + Math.random(),
+        text: selectedOptions,
+        isBot: false,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, userMessage]);
+      
+      // Completar onboarding
+      setTimeout(() => {
         completeOnboarding(userData);
-      }
-    }, 1000);
+      }, 1000);
+    }
   };
 
   const completeOnboarding = (finalUserData: UserData) => {
@@ -485,7 +591,27 @@ const TukiChat: React.FC = () => {
         </div>
 
         {/* Input Area */}
-        {currentQuestion >= 0 && currentQuestion < questions.length && !isTyping && currentQuestionData && (
+        {showClienteIdealSummary && (
+          <div className="border-t bg-gray-50/50 p-4">
+            <div className="flex space-x-3 justify-center">
+              <Button
+                onClick={() => handleClienteIdealConfirmation(true)}
+                className="bg-green-600 hover:bg-green-700 text-white px-8"
+              >
+                Sí, está correcto
+              </Button>
+              <Button
+                onClick={() => handleClienteIdealConfirmation(false)}
+                variant="outline"
+                className="px-8"
+              >
+                No, modificar
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {currentQuestion >= 0 && currentQuestion < questions.length && !isTyping && !showClienteIdealSummary && currentQuestionData && (
           <div className="border-t bg-gray-50/50 p-4">
             {validationError && (
               <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-md">
@@ -494,13 +620,13 @@ const TukiChat: React.FC = () => {
             )}
             
             {currentQuestionData.type === 'options' ? (
-              <div className="grid gap-2">
+              <div className="grid gap-3 max-w-2xl mx-auto">
                 {currentQuestionData.options?.map((option) => (
                   <Button
                     key={option}
                     variant="outline"
-                    onClick={() => handleOptionSelect(option)}
-                    className="justify-start text-left h-auto p-4 hover:bg-blue-50"
+                    onClick={() => handleOptionSelectNew(option)}
+                    className="justify-start text-left h-auto p-4 hover:bg-blue-50 text-wrap"
                   >
                     {option}
                   </Button>
@@ -508,10 +634,10 @@ const TukiChat: React.FC = () => {
               </div>
             ) : currentQuestionData.type === 'multiple' ? (
               <>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4 max-w-3xl mx-auto">
                   {currentQuestionData.options?.map((option) => {
-                    const isSelected = currentQuestionData.id === 'clienteIdeal' 
-                      ? userData.clienteIdeal.split(', ').includes(option)
+                    const isSelected = currentQuestionData.id === 'caracteristicasAdicionales' 
+                      ? clienteIdealData.caracteristicasAdicionales.includes(option)
                       : userData.redesSociales.includes(option);
                     
                     return (
@@ -519,19 +645,21 @@ const TukiChat: React.FC = () => {
                         key={option}
                         variant={isSelected ? "default" : "outline"}
                         onClick={() => handleMultipleSelect(option)}
-                        className="text-sm"
+                        className="text-sm h-auto p-3 text-wrap justify-start"
                       >
                         {option}
                       </Button>
                     );
                   })}
                 </div>
-                <Button 
-                  onClick={completeMultipleChoice}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                >
-                  Continuar
-                </Button>
+                <div className="flex justify-center">
+                  <Button 
+                    onClick={completeMultipleChoice}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-8"
+                  >
+                    Continuar
+                  </Button>
+                </div>
               </>
             ) : (
               <div className="flex space-x-2">
