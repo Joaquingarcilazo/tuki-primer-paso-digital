@@ -107,6 +107,7 @@ const TukiChat: React.FC = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [showWorking, setShowWorking] = useState(false);
   const [showClienteIdealSummary, setShowClienteIdealSummary] = useState(false);
+  const [showQuestionOptions, setShowQuestionOptions] = useState(false);
 
   useEffect(() => {
     // Forzar reinicio completo SIEMPRE
@@ -133,6 +134,7 @@ const TukiChat: React.FC = () => {
     setIsTyping(false);
     setHasStarted(false);
     setIsEditMode(false);
+    setShowQuestionOptions(false);
     
     // Iniciar el flujo inmediatamente con un timestamp único
     const timestamp = Date.now();
@@ -184,6 +186,8 @@ const TukiChat: React.FC = () => {
 
   const showNextQuestion = (questionIndex: number) => {
     setIsTyping(true);
+    setShowQuestionOptions(false);
+    
     setTimeout(() => {
       if (questionIndex < questions.length) {
         const question = questions[questionIndex];
@@ -196,6 +200,11 @@ const TukiChat: React.FC = () => {
         setMessages(prev => [...prev, newMessage]);
         setIsTyping(false);
         setValidationError(null);
+        
+        // Mostrar opciones después de un pequeño delay
+        setTimeout(() => {
+          setShowQuestionOptions(true);
+        }, 500);
       }
     }, 1500);
   };
@@ -331,6 +340,7 @@ const TukiChat: React.FC = () => {
 
     setInputValue('');
     setValidationError(null);
+    setShowQuestionOptions(false);
     
     // Avanzar a la siguiente pregunta
     const nextQuestion = currentQuestion + 1;
@@ -360,6 +370,7 @@ const TukiChat: React.FC = () => {
     // Solo manejar objetivo de marketing como selección única
     if (currentQuestionId === 'objetivoMarketing') {
       setUserData(prev => ({ ...prev, objetivoMarketing: option }));
+      setShowQuestionOptions(false);
       setCurrentQuestion(6); // Ir a redes sociales
       setTimeout(() => showNextQuestion(6), 1000);
     }
@@ -433,6 +444,7 @@ const TukiChat: React.FC = () => {
       };
       setMessages(prev => [...prev, userMessage]);
       
+      setShowQuestionOptions(false);
       setCurrentQuestion(2); // Ir a género
       setTimeout(() => showNextQuestion(2), 1000);
       
@@ -449,6 +461,7 @@ const TukiChat: React.FC = () => {
       };
       setMessages(prev => [...prev, userMessage]);
       
+      setShowQuestionOptions(false);
       setCurrentQuestion(3); // Ir a nivel adquisitivo
       setTimeout(() => showNextQuestion(3), 1000);
       
@@ -465,6 +478,7 @@ const TukiChat: React.FC = () => {
       };
       setMessages(prev => [...prev, userMessage]);
       
+      setShowQuestionOptions(false);
       setCurrentQuestion(4); // Ir a características adicionales
       setTimeout(() => showNextQuestion(4), 1000);
       
@@ -481,6 +495,7 @@ const TukiChat: React.FC = () => {
       };
       setMessages(prev => [...prev, userMessage]);
       
+      setShowQuestionOptions(false);
       // Mostrar resumen del cliente ideal
       setTimeout(() => {
         showClienteIdealConfirmation();
@@ -499,6 +514,7 @@ const TukiChat: React.FC = () => {
       };
       setMessages(prev => [...prev, userMessage]);
       
+      setShowQuestionOptions(false);
       // Completar onboarding
       setTimeout(() => {
         completeOnboarding(userData);
@@ -549,6 +565,7 @@ const TukiChat: React.FC = () => {
     setCurrentQuestion(questionIndex);
     setIsEditMode(false);
     setValidationError(null);
+    setShowQuestionOptions(false);
     
     // Pre-cargar la respuesta actual en el input si es de tipo texto
     const currentAnswer = userData[questions[questionIndex].id as keyof UserData];
@@ -680,7 +697,7 @@ const TukiChat: React.FC = () => {
           </div>
         )}
 
-        {currentQuestion >= 0 && currentQuestion < questions.length && !isTyping && !showClienteIdealSummary && currentQuestionData && (
+        {currentQuestion >= 0 && currentQuestion < questions.length && !isTyping && !showClienteIdealSummary && currentQuestionData && showQuestionOptions && (
           <div className="border-t bg-gray-50/50 p-4">
             {validationError && (
               <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-md">
