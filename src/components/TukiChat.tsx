@@ -110,6 +110,7 @@ const TukiChat: React.FC = () => {
   const [showClienteIdealSummary, setShowClienteIdealSummary] = useState(false);
   const [showQuestionOptions, setShowQuestionOptions] = useState(false);
   const [showInitialGreeting, setShowInitialGreeting] = useState(true);
+  const [tukiMessageCount, setTukiMessageCount] = useState(0);
 
   // Hook para notificaciones de audio
   const { playTukiNotification } = useAudioNotification();
@@ -141,6 +142,7 @@ const TukiChat: React.FC = () => {
     setIsEditMode(false);
     setShowQuestionOptions(false);
     setShowInitialGreeting(true);
+    setTukiMessageCount(0);
     
     // Iniciar el flujo inmediatamente con un timestamp único
     const timestamp = Date.now();
@@ -167,11 +169,9 @@ const TukiChat: React.FC = () => {
       };
 
       setMessages([welcomeMessage]);
+      setTukiMessageCount(1); // Primer mensaje de Tuki
       
-      // Reproducir sonido para el mensaje de bienvenida
-      setTimeout(() => {
-        playTukiNotification();
-      }, 100);
+      // NO reproducir sonido para el mensaje de bienvenida
 
       // Espera 2 segundos más, luego muestra "Trabajando para tu negocio"
       setTimeout(() => {
@@ -220,8 +220,17 @@ const TukiChat: React.FC = () => {
         setIsTyping(false);
         setValidationError(null);
         
-        // Reproducir sonido cuando aparece la pregunta
-        playTukiNotification();
+        // Incrementar contador y reproducir sonido solo después del segundo mensaje
+        setTukiMessageCount(prev => {
+          const newCount = prev + 1;
+          if (newCount > 2) {
+            // Reproducir sonido cuando aparece la pregunta (solo después de los primeros 2 mensajes)
+            setTimeout(() => {
+              playTukiNotification();
+            }, 100);
+          }
+          return newCount;
+        });
         
         // Mostrar opciones después de un delay más largo para asegurar que la pregunta sea visible
         setTimeout(() => {
@@ -261,8 +270,17 @@ const TukiChat: React.FC = () => {
       setMessages(prev => [...prev, confirmationMessage]);
       setIsTyping(false);
       
-      // Reproducir sonido para la confirmación
-      playTukiNotification();
+      // Incrementar contador y reproducir sonido solo después del segundo mensaje
+      setTukiMessageCount(prev => {
+        const newCount = prev + 1;
+        if (newCount > 2) {
+          // Reproducir sonido para la confirmación
+          setTimeout(() => {
+            playTukiNotification();
+          }, 100);
+        }
+        return newCount;
+      });
     }, 1500);
   };
 
@@ -324,8 +342,17 @@ const TukiChat: React.FC = () => {
       setIsTyping(false);
       setValidationError(errorMessage);
       
-      // Reproducir sonido para errores de validación
-      playTukiNotification();
+      // Incrementar contador y reproducir sonido solo después del segundo mensaje
+      setTukiMessageCount(prev => {
+        const newCount = prev + 1;
+        if (newCount > 2) {
+          // Reproducir sonido para errores de validación
+          setTimeout(() => {
+            playTukiNotification();
+          }, 100);
+        }
+        return newCount;
+      });
     }, 1000);
   };
 
@@ -566,8 +593,17 @@ const TukiChat: React.FC = () => {
       setMessages(prev => [...prev, completionMessage]);
       setIsTyping(false);
       
-      // Reproducir sonido para el mensaje de finalización
-      playTukiNotification();
+      // Incrementar contador y reproducir sonido solo después del segundo mensaje
+      setTukiMessageCount(prev => {
+        const newCount = prev + 1;
+        if (newCount > 2) {
+          // Reproducir sonido para el mensaje de finalización
+          setTimeout(() => {
+            playTukiNotification();
+          }, 100);
+        }
+        return newCount;
+      });
       
       // Guardar en localStorage
       localStorage.setItem('tukiUserData', JSON.stringify(finalUserData));
