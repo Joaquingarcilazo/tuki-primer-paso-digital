@@ -60,9 +60,9 @@ const questions = [
   },
   {
     id: 'redesSociales',
-    text: '¡Última pregunta! ¿Tenés redes sociales activas? Seleccioná todas las que usás 📱',
+    text: '¡Última pregunta! ¿Qué canales digitales utilizás o te interesa usar para promocionar tu negocio? Seleccioná todos los que apliquen 📱',
     type: 'multiple',
-    options: ['Instagram', 'Facebook', 'Google My Business', 'Email Marketing', 'No tengo redes activas aún']
+    options: ['Instagram', 'Facebook', 'Google Ads', 'Email Marketing']
   }
 ];
 
@@ -298,7 +298,7 @@ const startOnboarding = () => {
     if (currentQuestionId === 'clienteIdeal') {
       selectedOptions = userData.clienteIdeal.length > 0 ? userData.clienteIdeal : 'No especificado';
     } else if (currentQuestionId === 'redesSociales') {
-      selectedOptions = userData.redesSociales.length > 0 ? userData.redesSociales.join(', ') : 'No tengo redes activas aún';
+      selectedOptions = userData.redesSociales.length > 0 ? userData.redesSociales.join(', ') : 'Ningún canal seleccionado';
     }
     
     const userMessage: Message = {
