@@ -20,11 +20,6 @@ interface KPI {
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
 }
 
-interface Insight {
-  type: string;
-  text: string;
-}
-
 interface InvestmentData {
   type: string;
   amount: number;
@@ -34,20 +29,20 @@ interface InvestmentData {
 const kpiData: KPI[] = [
   {
     label: 'Impresiones',
-    value: '2,847,300',
-    subtitle: 'vs. 1,923,400 el mes pasado',
+    value: '2,847',
+    subtitle: 'vs. 1,923 el mes pasado',
     icon: Eye,
   },
   {
     label: 'Clicks',
-    value: '456,800',
-    subtitle: 'vs. 289,200 el mes pasado',
+    value: '457',
+    subtitle: 'vs. 289 el mes pasado',
     icon: MousePointer,
   },
   {
     label: 'Conversiones',
-    value: '89,200',
-    subtitle: 'vs. 67,400 el mes pasado',
+    value: '89',
+    subtitle: 'vs. 67 el mes pasado',
     icon: ShoppingCart,
   },
   {
@@ -58,16 +53,10 @@ const kpiData: KPI[] = [
   },
 ];
 
-const insights: Insight[] = [
-  { type: 'CTR', text: 'Tu CTR ha aumentado un 28% en la última semana gracias a los nuevos creativos.' },
-  { type: 'Audiencia', text: 'La mayoría de tus conversiones provienen de usuarios entre 25 y 34 años en Argentina.' },
-  { type: 'Plataforma', text: 'Instagram está generando el mayor retorno de inversión, seguido por Facebook.' },
-];
-
 // Datos para el gráfico de inversión vs ingresos
 const investmentData: InvestmentData[] = [
-  { type: 'Inversión total', amount: 85000, color: '#ef4444' },
-  { type: 'Ingresos generados', amount: 267000, color: '#10b981' },
+  { type: 'Inversión', amount: 8500, color: '#ef4444' },
+  { type: 'Ingresos', amount: 26700, color: '#10b981' },
 ];
 
 const CampaignDashboard: React.FC = () => {
@@ -89,11 +78,11 @@ const CampaignDashboard: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
             <div>
               <p className="text-sm text-gray-600">Inversión total</p>
-              <p className="text-2xl font-bold text-gray-800">$850,000</p>
+              <p className="text-2xl font-bold text-gray-800">$8,500</p>
             </div>
             <div>
               <p className="text-sm text-gray-600">Ingresos generados</p>
-              <p className="text-2xl font-bold text-green-600">$2,670,000</p>
+              <p className="text-2xl font-bold text-green-600">$26,700</p>
             </div>
             <div>
               <p className="text-sm text-gray-600">Retorno</p>
@@ -115,7 +104,7 @@ const CampaignDashboard: React.FC = () => {
           <ResponsiveContainer width="100%" height="100%">
             <BarChart 
               data={investmentData} 
-              margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
+              margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
               maxBarSize={120}
             >
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -123,13 +112,13 @@ const CampaignDashboard: React.FC = () => {
                 dataKey="type" 
                 axisLine={false}
                 tickLine={false}
-                tick={false}
+                tick={{ fontSize: 12, fill: '#666' }}
               />
               <YAxis 
                 axisLine={false}
                 tickLine={false}
                 tick={{ fontSize: 12, fill: '#666' }}
-                domain={[0, 'dataMax + 50000']}
+                domain={[0, 'dataMax + 5000']}
                 tickFormatter={(value) => `$${value.toLocaleString()}`}
               />
               <Bar dataKey="amount" radius={[4, 4, 0, 0]}>
@@ -139,15 +128,6 @@ const CampaignDashboard: React.FC = () => {
               </Bar>
             </BarChart>
           </ResponsiveContainer>
-          {/* Labels positioned directly below bars */}
-          <div className="absolute bottom-4 left-0 right-0 flex justify-around px-8">
-            <div className="text-center">
-              <span className="text-sm text-gray-600 font-medium">Inversión</span>
-            </div>
-            <div className="text-center">
-              <span className="text-sm text-gray-600 font-medium">Ingresos</span>
-            </div>
-          </div>
         </div>
       </Card>
 
@@ -168,23 +148,6 @@ const CampaignDashboard: React.FC = () => {
           </Card>
         ))}
       </div>
-
-      {/* Insights */}
-      <Card className="p-6 mb-8">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">
-          🔍 Insights clave
-        </h3>
-        <div className="space-y-3">
-          {insights.map((insight, index) => (
-            <div key={index} className="flex items-start space-x-3">
-              <Badge variant="secondary" className="mt-1">
-                {insight.type}
-              </Badge>
-              <p className="text-sm text-gray-700">{insight.text}</p>
-            </div>
-          ))}
-        </div>
-      </Card>
 
       {/* Call to Action Button */}
       <Card className="p-8 bg-gradient-to-r from-blue-100 to-cyan-100 border border-blue-200">
