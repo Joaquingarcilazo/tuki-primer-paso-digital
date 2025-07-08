@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -137,7 +136,7 @@ const CampaignDashboard: React.FC = () => {
           <ResponsiveContainer width="100%" height="100%">
             <BarChart 
               data={investmentData} 
-              margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+              margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
               maxBarSize={120}
             >
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -145,7 +144,7 @@ const CampaignDashboard: React.FC = () => {
                 dataKey="type" 
                 axisLine={false}
                 tickLine={false}
-                tick={{ fontSize: 12, fill: '#666' }}
+                tick={false}
               />
               <YAxis 
                 axisLine={false}
@@ -162,14 +161,12 @@ const CampaignDashboard: React.FC = () => {
             </BarChart>
           </ResponsiveContainer>
         </div>
-        <div className="flex justify-center space-x-6 mt-4">
-          <div className="flex items-center">
-            <div className="w-3 h-3 bg-red-500 rounded mr-2"></div>
-            <span className="text-sm text-gray-600">Inversión</span>
+        <div className="flex justify-around mt-2">
+          <div className="text-center">
+            <span className="text-sm text-gray-600 font-medium">Inversión</span>
           </div>
-          <div className="flex items-center">
-            <div className="w-3 h-3 bg-green-500 rounded mr-2"></div>
-            <span className="text-sm text-gray-600">Ingresos</span>
+          <div className="text-center">
+            <span className="text-sm text-gray-600 font-medium">Ingresos</span>
           </div>
         </div>
       </Card>
