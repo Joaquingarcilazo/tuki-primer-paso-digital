@@ -50,7 +50,7 @@ const questions = [
   },
   {
     id: 'nivelAdquisitivo',
-    text: 'Genial. ¿Qué niveles adquisitivos tienen tus clientes ideales? Podés seleccionar todas las opciones que apliquen 💰',
+    text: 'Genial. ¿Qué niveles adquisitivos tienen? Podés seleccionar todas las opciones que apliquen 💰',
     type: 'multiple',
     options: ['Poder adquisitivo alto', 'Poder adquisitivo medio', 'Poder adquisitivo bajo', 'Todos los niveles']
   },
